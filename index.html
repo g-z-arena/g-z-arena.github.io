@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GZ Arena</title>
+<meta name="theme-color" content="#070a1c">
+<link rel="icon" href="__LOGO__">
+<link href="https://fonts.googleapis.com/css2?family=Changa:wght@500;700;800&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070a1c;--card:#111838cc;--line:#26307a;--blue:#2f7bff;--purple:#8b3dff;--gold:#ffb400;--text:#eef1ff;--mut:#97a0d0;--ok:#2ee59d;--bad:#ff4d6d}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Cairo,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;background:radial-gradient(600px 400px at 90% -10%,#8b3dff33,transparent),radial-gradient(600px 400px at 0% 100%,#2f7bff33,transparent);pointer-events:none;z-index:-1}
+h1,h2,h3,.ch{font-family:Changa,Cairo,sans-serif}
+h2{margin:18px 0 6px;font-size:20px}
+a{color:inherit}
+header{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:8px 14px;background:#070a1ce6;backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header img{width:38px;height:38px;border-radius:10px}
+header .t{font:800 18px Changa;background:linear-gradient(90deg,#fff,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+header .sp{flex:1}
+.nav{position:fixed;bottom:0;inset-inline:0;z-index:20;display:flex;justify-content:space-around;background:#0a0f2af2;backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+.nav a{flex:1;text-align:center;color:var(--mut);text-decoration:none;font-size:11px;padding:4px;border-radius:12px}
+.nav a span{display:block;font-size:20px}
+.nav a.on{color:#fff;background:linear-gradient(135deg,#2f7bff44,#8b3dff44)}
+main{max-width:900px;margin:auto;padding:14px 14px 96px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:10px 0;box-shadow:0 0 24px #2f7bff14}
+.center{text-align:center}
+.btn{font:700 15px Changa,Cairo;color:#fff;border:0;border-radius:12px;padding:10px 18px;cursor:pointer;background:linear-gradient(135deg,var(--blue),var(--purple));box-shadow:0 0 16px #8b3dff55;transition:.15s;text-decoration:none;display:inline-block}
+.btn:active{transform:scale(.96)}
+.btn.ghost{background:transparent;border:1px solid var(--line);box-shadow:none;color:var(--mut)}
+.btn.gold{background:linear-gradient(135deg,#ffb400,#ff7a00);color:#2a1700;box-shadow:0 0 16px #ffb40055}
+.btn.sm{padding:6px 12px;font-size:13px}
+.btn:disabled{opacity:.4;pointer-events:none}
+input,select,textarea{width:100%;font:600 15px Cairo;color:var(--text);background:#0a0f2a;border:1px solid var(--line);border-radius:12px;padding:10px 12px;outline:none;margin:4px 0}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px #2f7bff33}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center}
+.row>input{flex:1;min-width:120px}
+.muted{color:var(--mut);font-size:13px}
+.chip{display:inline-block;background:#1a2260;border:1px solid var(--line);border-radius:99px;padding:2px 10px;font-size:12px;margin:2px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.tile{display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--text);cursor:pointer;text-align:right;font-family:inherit}
+.tile b{font:700 17px Changa}.tile span{color:var(--mut);font-size:13px}
+.game{text-align:center}.game .gi{font-size:44px}.game p{color:var(--mut);font-size:13px;margin:4px 0 10px;min-height:38px}
+.hero{display:flex;gap:14px;align-items:center}
+.logo-big{width:84px;height:84px;border-radius:20px;box-shadow:0 0 30px #8b3dff77}
+.hero>div{flex:1}
+.bar{height:10px;background:#0a0f2a;border-radius:9px;overflow:hidden;border:1px solid var(--line);margin-top:6px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--purple),var(--gold));border-radius:9px}
+.list>*{margin:6px 0}
+.item{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.item .g{flex:1}
+.rk{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:12px;background:#0a0f2a;margin:5px 0;text-align:right}
+.rk span:nth-child(2){flex:1}
+.rk.me{border:1px solid var(--gold)}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:4px 0}
+.tabs button{white-space:nowrap}
+.tabs .on{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border-color:transparent}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.gold{color:var(--gold)}
+#toast{position:fixed;top:70px;left:50%;transform:translate(-50%,-30px);opacity:0;background:#1a2260;border:1px solid var(--blue);padding:10px 18px;border-radius:14px;z-index:99;transition:.25s;pointer-events:none;font-weight:700}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#toast.ok{border-color:var(--ok)}#toast.bad{border-color:var(--bad)}
+canvas{max-width:100%;height:auto;border-radius:16px;border:2px solid var(--line);touch-action:none;margin:8px 0}
+.shake{animation:sh .35s}@keyframes sh{25%{transform:translateX(8px)}75%{transform:translateX(-8px)}}
+.secret{font:700 22px Changa;padding:20px;border-radius:16px;margin:12px 0;border:2px dashed currentColor;line-height:1.8}
+.code b{font:800 28px Changa;letter-spacing:4px;color:var(--gold)}
+.pl{display:inline-flex;gap:6px;align-items:center;background:#0a0f2a;border:1px solid var(--line);border-radius:99px;padding:4px 12px;margin:3px;font-size:13px}
+.pl.turn{border-color:var(--gold);box-shadow:0 0 12px #ffb40066}
+.mem{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0}
+.mc{aspect-ratio:1;font-size:28px;border-radius:12px;border:1px solid var(--line);background:#1a2260;color:#fff;cursor:pointer}
+.mc.open{background:#ffffff26}.mc.done{opacity:.45;background:#2ee59d33}
+.opt{display:block;width:100%;text-align:right;margin:7px 0;padding:12px;border-radius:12px;border:1px solid var(--line);background:#0a0f2a;color:var(--text);font:600 15px Cairo;cursor:pointer}
+.opt.good{background:#2ee59d33;border-color:var(--ok)}.opt.wrong{background:#ff4d6d33;border-color:var(--bad)}
+.react{height:200px;border-radius:18px;display:flex;align-items:center;justify-content:center;font:700 22px Changa;background:#1a2260;cursor:pointer;user-select:none;margin:10px 0;text-align:center;padding:10px}
+.react.wait{background:#7a1f33}.react.go{background:#16a36b}.react.bad{background:#7a4b1f}
+.dpad{display:flex;flex-direction:column;align-items:center;gap:4px;margin:8px 0}
+.dpad div{display:flex;gap:4px}
+.dpad button{width:56px;height:46px;border-radius:12px;border:1px solid var(--line);background:#1a2260;color:#fff;font-size:18px}
+.ttxt{font:700 20px Cairo;line-height:2;background:#0a0f2a;padding:12px;border-radius:12px;margin:10px 0}
+.badge{display:inline-block;padding:8px 12px;margin:4px;border-radius:12px;background:#1a2260;border:1px solid var(--gold);font-size:13px}
+.badge.lock{opacity:.35;border-color:var(--line);filter:grayscale(1)}
+.av{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin:8px 0}
+.av button{font-size:24px;background:#0a0f2a;border:1px solid var(--line);border-radius:10px;padding:4px;cursor:pointer}
+.av button.on{border-color:var(--gold);box-shadow:0 0 10px #ffb40088}
+.qa{background:#0a0f2a;border-radius:12px;padding:8px 10px;margin:5px 0;text-align:right;font-size:14px}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.stat div{background:#0a0f2a;border-radius:12px;padding:10px}.stat b{display:block;font:800 22px Changa;color:var(--gold)}
+.load{padding:40px;text-align:center;color:var(--mut)}
+.tag{font-size:11px;padding:2px 8px;border-radius:8px;background:#8b3dff44}
+pre{background:#0a0f2a;padding:10px;border-radius:10px;overflow:auto;direction:ltr;text-align:left;font-size:12px}
+@media(min-width:700px){.nav{max-width:520px;margin:auto;border-radius:20px 20px 0 0;border:1px solid var(--line)}}
+</style>
+</head>
+<body>
+<div id="app"><div class="load">⏳ جاري التحميل…</div></div>
+<div id="toast"></div>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,updateProfile} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getFirestore,doc,getDoc,setDoc,updateDoc,addDoc,deleteDoc,collection,query,where,orderBy,limit,onSnapshot,getDocs,increment,arrayUnion,arrayRemove,deleteField} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* ========= الإعدادات: عدّل القيم دي بس ========= */
+const firebaseConfig={apiKey:"PASTE_API_KEY",authDomain:"PASTE",projectId:"PASTE",storageBucket:"PASTE",messagingSenderId:"PASTE",appId:"PASTE"};
+const ADMIN_EMAIL="PASTE_ADMIN_EMAIL";
+/* =============================================== */
+const LOGO="__LOGO__";
+
+/* ---------- أدوات ---------- */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const pick=a=>a[Math.random()*a.length|0];
+const norm=s=>String(s||'').toLowerCase().replace(/[ً-ْـ]/g,'').replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/[^a-z0-9؀-ۿ]/g,'');
+const lvl=xp=>Math.floor(Math.sqrt((xp||0)/60))+1;
+const lvlBase=l=>(l-1)*(l-1)*60;
+const AV=['😎','🦊','🐯','🦁','🐼','🐸','🤖','👾','🦄','🐲','🥷','🧙','👽','🦅','🐺','🔥'];
+let tt;function toast(m,c=''){const t=$('#toast');t.className='show '+c;t.textContent=m;clearTimeout(tt);tt=setTimeout(()=>t.className='',2300)}
+let unsubs=[];const listen=f=>unsubs.push(f);const cleanup=()=>{unsubs.forEach(f=>{try{f()}catch{}});unsubs=[]};
+const locks={};const lock=(k,f)=>{if(locks[k])return;locks[k]=1;Promise.resolve().then(f).catch(()=>{delete locks[k]})};
+const view=()=>$('#view');
+const ACT={};
+const S={user:null,profile:null,admin:false};
+const fmtD=t=>new Date(t).toLocaleString('ar-EG',{dateStyle:'medium',timeStyle:'short'});
+const getp=(o,p)=>p.split('.').reduce((a,k)=>a?.[k],o);
+
+/* ---------- لو Firebase مش مضبوط ---------- */
+if(firebaseConfig.apiKey.startsWith('PASTE')){
+  $('#app').innerHTML=`<main><div class="card"><img src="${LOGO}" style="width:80px;border-radius:18px"><h2>⚙️ خطوة أخيرة قبل التشغيل</h2>
+  <p class="muted">افتح الملف index.html وعدّل قيم firebaseConfig و ADMIN_EMAIL في أول السكريبت:</p>
+  <ol style="line-height:2;padding-inline-start:20px">
+  <li>ادخل console.firebase.google.com وأنشئ مشروع جديد.</li>
+  <li>Authentication ← Sign-in method ← فعّل Email/Password.</li>
+  <li>Firestore Database ← Create database (production mode) ← من تبويب Rules الصق محتوى ملف firestore.rules (بعد ما تغيّر الإيميل جواه).</li>
+  <li>Project settings ← Your apps ← Web ← انسخ firebaseConfig وحطه في الملف.</li>
+  <li>Authentication ← Settings ← Authorized domains ← ضيف دومين GitHub Pages بتاعك (username.github.io).</li>
+  </ol></div></main>`;
+  throw new Error('firebase not configured');
+}
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+
+/* ---------- بيانات ثابتة ---------- */
+const BUILTIN_PUZZLES=[
+{emoji:'🍄',answer:'سوبر ماريو',aliases:['ماريو','mario','super mario'],level:1},
+{emoji:'👻',answer:'باك مان',aliases:['pacman','pac man','باكمان'],level:1},
+{emoji:'🧱',answer:'ماينكرافت',aliases:['minecraft','ماين كرافت'],level:1},
+{emoji:'⚽',answer:'فيفا',aliases:['fifa','efootball','بيس','pes'],level:2},
+{emoji:'🐦',answer:'فلابي بيرد',aliases:['flappy bird','flappybird'],level:2},
+{emoji:'🦔',answer:'سونيك',aliases:['sonic'],level:2},
+{emoji:'🌻🧟',answer:'نباتات ضد زومبي',aliases:['plants vs zombies','pvz'],level:3},
+{emoji:'🐔🛣️',answer:'كروسي رود',aliases:['crossy road'],level:3},
+{emoji:'🔫🍗',answer:'ببجي',aliases:['pubg','بابجي'],level:4},
+{emoji:'🪲🗡️',answer:'هولو نايت',aliases:['hollow knight'],level:5}];
+const QG={hollow:{name:'Hollow Knight',icon:'🪲'},bomb:{name:'Bomb Squad',icon:'💣'},pubg:{name:'PUBG',icon:'🔫'},roblox:{name:'Roblox',icon:'🧱'}};
+const BUILTIN_Q=[
+{game:'hollow',q:'إيه اسم المملكة اللي بتدور فيها أحداث Hollow Knight؟',o:['هالونست (Hallownest)','دورتماوث','جرايف باث','كينغدوم هارت'],c:0},
+{game:'hollow',q:'إيه العملة اللي بتجمعها في اللعبة؟',o:['جيو (Geo)','روبوكس','كوينز','جيمز'],c:0},
+{game:'hollow',q:'مين الشركة المطورة للعبة؟',o:['Team Cherry','Nintendo','Ubisoft','Mojang'],c:0},
+{game:'hollow',q:'إيه السلاح الأساسي للبطل؟',o:['المسمار (Nail)','القوس','الفأس','السحر فقط'],c:0},
+{game:'hollow',q:'إيه اسم الجزء التاني من اللعبة؟',o:['Silksong','Hollow Night','Shadow Knight','Void Heart'],c:0},
+{game:'pubg',q:'إيه الاسم الكامل للعبة؟',o:["PlayerUnknown's Battlegrounds",'Player United Battle Ground','Pro Unknown Battle Game','Public Battle Ground'],c:0},
+{game:'pubg',q:'كام لاعب في الماتش الكلاسيك على الـPC؟',o:['100','50','200','25'],c:0},
+{game:'pubg',q:'إيه اسم أول خريطة في اللعبة؟',o:['Erangel','Miramar','Sanhok','Vikendi'],c:0},
+{game:'pubg',q:'جملة الفوز المشهورة في اللعبة؟',o:['Winner Winner Chicken Dinner','Victory Royale','Game Over','You Are The Champion'],c:0},
+{game:'pubg',q:'إيه اللي بيضيق على اللاعبين خلال الماتش؟',o:['البلو زون (الدايرة)','النيران بس','الفيضان','الزومبي'],c:0},
+{game:'roblox',q:'إيه العملة داخل Roblox؟',o:['Robux','Geo','V-Bucks','Gems'],c:0},
+{game:'roblox',q:'إيه الأداة اللي بتصمم بيها الألعاب في Roblox؟',o:['Roblox Studio','Unity Hub','Game Maker','Blender'],c:0},
+{game:'roblox',q:'لغة البرمجة المستخدمة في Roblox (نسخة معدّلة منها)؟',o:['Lua / Luau','Python','Java','C#'],c:0},
+{game:'roblox',q:'إيه اللعبة المشهورة في Roblox اللي بتتبنى فيها حيوانات أليفة؟',o:['Adopt Me!','Minecraft','Among Us','Fall Guys'],c:0},
+{game:'roblox',q:'شكل الشخصيات (الأفاتار) الافتراضي في Roblox قريب من؟',o:['مكعبات (بلوكي)','واقعي','رسوم 2D','بكسل صغير'],c:0}];
+const SPY={'أماكن':['مطار','مستشفى','سينما','مدرسة','شاطئ','مطعم','سوبر ماركت','ملاهي'],'أكلات':['كشري','بيتزا','شاورما','فلافل','ملوخية','برجر','كنافة','فول'],'ألعاب':['ببجي','ماينكرافت','روبلوكس','فيفا','هولو نايت','فورتنايت','كلاش رويال','GTA'],'حيوانات':['أسد','جمل','قطة','فيل','دلفين','نمر','صقر','حصان'],'مهن':['دكتور','مهندس','طيار','شرطي','طباخ','مدرس','مصمم','سباك']};
+const BADGES=[
+{id:'first',n:'🎮 أول خطوة',d:'العب أول لعبة',ok:p=>p.played>=1},
+{id:'p10',n:'🔥 لاعب نشيط',d:'العب 10 ألعاب',ok:p=>p.played>=10},
+{id:'w1',n:'🏆 أول فوز',d:'كسب مرة',ok:p=>p.wins>=1},
+{id:'w5',n:'👑 بطل',d:'كسب 5 مرات',ok:p=>p.wins>=5},
+{id:'l5',n:'⭐ مستوى 5',d:'وصّل للمستوى 5',ok:p=>lvl(p.xp)>=5},
+{id:'qp',n:'🧠 كويز مثالي',d:'جاوب كل أسئلة كويز صح',ok:p=>(p.scores?.quizPerfect||0)>=1},
+{id:'sn',n:'🐍 ثعبان محترف',d:'15 نقطة في الثعبان',ok:p=>(p.scores?.snake||0)>=15},
+{id:'spy',n:'🕵️ جاسوس ماهر',d:'اكسب كجاسوس في برا السالفة',ok:p=>p.spyWins>=1}];
+const ERR={'auth/invalid-credential':'الإيميل أو الباسورد غلط','auth/user-not-found':'الحساب مش موجود','auth/wrong-password':'الباسورد غلط','auth/email-already-in-use':'الإيميل ده مسجل قبل كده','auth/weak-password':'الباسورد ضعيف (6 حروف على الأقل)','auth/invalid-email':'الإيميل مش صحيح','auth/network-request-failed':'مشكلة في النت','auth/too-many-requests':'محاولات كتير، استنى شوية'};
+
+/* ---------- الدخول ---------- */
+const newProfile=n=>({name:n,avatar:pick(AV),xp:0,wins:0,played:0,spyWins:0,badges:[],scores:{},createdAt:Date.now()});
+onAuthStateChanged(auth,async u=>{
+  cleanup();S.pu&&S.pu();S.pu=null;
+  if(!u){S.user=null;S.profile=null;showAuth();return}
+  S.user=u;S.admin=(u.email||'').toLowerCase()===ADMIN_EMAIL.toLowerCase();
+  const ref=doc(db,'users',u.uid);
+  try{const sn=await getDoc(ref);if(!sn.exists())await setDoc(ref,newProfile(S.reg?.name||u.displayName||u.email.split('@')[0]))}
+  catch(e){toast('تأكد من قواعد Firestore: '+(e.code||''),'bad')}
+  let first=true;
+  S.pu=onSnapshot(ref,s=>{if(!s.exists())return;S.profile=s.data();badgeCheck();if(first){first=false;buildShell();route()}else updateHeader()});
+});
+function showAuth(mode='login'){
+  $('#app').innerHTML=`<main style="max-width:420px"><div class="card center"><img src="${LOGO}" style="width:130px;border-radius:26px;box-shadow:0 0 40px #8b3dff88">
+  <h2>أهلاً بيك في GZ Arena</h2><p class="muted">${mode==='login'?'سجّل دخولك وكمّل التحدي':'اعمل حساب جديد وانضم للأرينا'}</p>
+  ${mode==='reg'?'<input id="nm" placeholder="اسمك في الأرينا" maxlength="16">':''}
+  <input id="em" type="email" placeholder="الإيميل" dir="ltr"><input id="pw" type="password" placeholder="الباسورد" dir="ltr" data-enter="${mode==='login'?'login':'register'}">
+  <button class="btn" style="width:100%;margin-top:8px" data-a="${mode==='login'?'login':'register'}">${mode==='login'?'دخول':'إنشاء حساب'}</button>
+  <p class="muted" style="margin-top:12px">${mode==='login'?'معندكش حساب؟':'عندك حساب؟'} <a href="#" data-a="authtab" data-v="${mode==='login'?'reg':'login'}" style="color:var(--gold)">${mode==='login'?'سجّل هنا':'ادخل هنا'}</a></p></div></main>`;
+}
+ACT.authtab=el=>showAuth(el.dataset.v);
+ACT.login=async()=>{try{await signInWithEmailAndPassword(auth,$('#em').value.trim(),$('#pw').value)}catch(e){toast(ERR[e.code]||e.code,'bad')}};
+ACT.register=async()=>{const n=$('#nm').value.trim();if(n.length<2)return toast('اكتب اسمك','bad');S.reg={name:n};
+  try{const c=await createUserWithEmailAndPassword(auth,$('#em').value.trim(),$('#pw').value);await updateProfile(c.user,{displayName:n})}catch(e){S.reg=null;toast(ERR[e.code]||e.code,'bad')}};
+ACT.logout=()=>signOut(auth);
+
+/* ---------- الهيكل والراوتر ---------- */
+function buildShell(){
+  $('#app').innerHTML=`<header><img src="${LOGO}"><span class="t">GZ ARENA</span><span class="sp"></span><span id="hd"></span></header>
+  <main id="view"></main>
+  <nav class="nav"><a href="#/home"><span>🏠</span>الرئيسية</a><a href="#/games"><span>🎮</span>ألعاب</a><a href="#/leaderboard"><span>🏅</span>المتصدرين</a><a href="#/events"><span>📅</span>فعاليات</a><a href="#/profile"><span>👤</span>حسابي</a>${S.admin?'<a href="#/admin"><span>⚙️</span>أدمن</a>':''}</nav>`;
+  updateHeader();
+}
+function updateHeader(){const p=S.profile,h=$('#hd');if(h)h.innerHTML=`<span class="chip">${p.avatar} ${esc(p.name)} • Lv ${lvl(p.xp)}</span>`}
+function route(){
+  cleanup();if(!S.profile||!view())return;
+  const [,page,arg]=(location.hash||'#/home').split('/');
+  const nav=['room','play','quiz'].includes(page)?'games':page;
+  document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#/'+nav));
+  const V={home:viewHome,games:viewGames,room:viewRoom,leaderboard:viewLB,events:viewEvents,profile:viewProfile,admin:viewAdmin,play:viewPlay,quiz:viewQuiz};
+  (V[page]||viewHome)(arg);window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',route);
+document.addEventListener('click',e=>{const t=e.target.closest('[data-a]');if(!t)return;const f=ACT[t.dataset.a];if(f){if(t.tagName==='A')e.preventDefault();Promise.resolve(f(t,e)).catch(er=>{console.error(er);toast('حصل خطأ: '+(er.code||er.message),'bad')})}});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.dataset?.enter){e.preventDefault();ACT[e.target.dataset.enter]?.(e.target)}});
+
+/* ---------- XP والشارات ---------- */
+const fin={};
+async function finalize(key,{xp,win,extra={}}){if(fin[key])return;fin[key]=1;const o={xp:increment(xp),played:increment(1),...extra};if(win)o.wins=increment(1);await updateDoc(doc(db,'users',S.user.uid),o);toast('+'+xp+' XP ⭐','ok')}
+async function best(key,val,higher=true){const cur=(S.profile.scores||{})[key];if(cur==null||(higher?val>cur:val<cur))await updateDoc(doc(db,'users',S.user.uid),{['scores.'+key]:val})}
+let bcBusy=false;
+function badgeCheck(){const p=S.profile;if(!p||bcBusy)return;const have=new Set(p.badges||[]);const add=BADGES.filter(b=>!have.has(b.id)&&b.ok(p));if(!add.length)return;bcBusy=true;
+  updateDoc(doc(db,'users',S.user.uid),{badges:arrayUnion(...add.map(b=>b.id))}).then(()=>toast('🎖️ شارة جديدة: '+add[0].n,'ok')).catch(()=>{}).finally(()=>bcBusy=false)}
+const xpBar=p=>{const l=lvl(p.xp),b=lvlBase(l),n=lvlBase(l+1),pc=Math.min(100,Math.round((p.xp-b)/(n-b)*100));return `<div class="muted">المستوى ${l} • ${p.xp} XP (باقي ${n-p.xp} للمستوى ${l+1})</div><div class="bar"><i style="width:${pc}%"></i></div>`};
+
+/* ---------- الرئيسية ---------- */
+function viewHome(){
+  const p=S.profile;
+  view().innerHTML=`<section class="card hero"><img src="${LOGO}" class="logo-big"><div><h1>أهلاً يا ${esc(p.name)} 👋</h1>${xpBar(p)}</div></section>
+  <div class="grid2"><a class="card tile" href="#/games"><b>🎮 العب دلوقتي</b><span>غرف مباشرة مع صحابك</span></a><a class="card tile" href="#/quiz"><b>🧠 جيمر كويز</b><span>اختبر معلوماتك في لعبتك</span></a></div>
+  <h2>🔴 غرف مفتوحة</h2><div id="rooms" class="list"></div>
+  <h2>🏅 أعلى 5 لاعبين</h2><div id="top" class="list"></div>
+  <h2>📅 الفعاليات القادمة</h2><div id="ev" class="list"></div>`;
+  roomsLive($('#rooms'));
+  getDocs(query(collection(db,'users'),orderBy('xp','desc'),limit(5))).then(s=>{$('#top').innerHTML=s.docs.map((d,i)=>{const u=d.data();return `<div class="rk ${d.id===S.user.uid?'me':''}"><span>${['🥇','🥈','🥉'][i]||i+1}</span><span>${u.avatar} ${esc(u.name)}</span><b>${u.xp} XP</b></div>`}).join('')||'<p class="muted">لسه مفيش لاعبين</p>'}).catch(()=>{});
+  getDocs(query(collection(db,'events'),orderBy('date','desc'),limit(10))).then(s=>{const a=s.docs.map(d=>d.data()).filter(e=>e.date>=Date.now()).slice(-2);$('#ev').innerHTML=a.map(e=>`<a class="item" href="#/events" style="text-decoration:none"><span style="font-size:24px">${EVI[e.type]||'📅'}</span><div class="g"><b>${esc(e.title)}</b><div class="muted">${fmtD(e.date)}</div></div></a>`).join('')||'<p class="muted">مفيش فعاليات قريبة</p>'}).catch(()=>{});
+}
+
+/* ---------- الغرف ---------- */
+function roomsLive(el){
+  listen(onSnapshot(query(collection(db,'rooms'),where('status','==','lobby'),limit(15)),s=>{
+    const a=s.docs.map(d=>({id:d.id,...d.data()})).filter(r=>r.createdAt>Date.now()-6*3600e3&&G[r.game]);
+    el.innerHTML=a.map(r=>`<div class="item"><span style="font-size:26px">${G[r.game].icon}</span><div class="g"><b>${G[r.game].name}</b><div class="muted">الهوست: ${esc(r.hostName)} • ${r.playerIds.length}/${G[r.game].max}</div></div><button class="btn sm" data-a="join" data-v="${r.id}">ادخل</button></div>`).join('')||'<p class="muted">مفيش غرف مفتوحة — اعمل غرفتك من صفحة الألعاب</p>'}));
+}
+const newPl=()=>({name:S.profile.name,avatar:S.profile.avatar,score:0});
+ACT.mk=async el=>{const k=el.dataset.v,u=S.user.uid;const r=await addDoc(collection(db,'rooms'),{game:k,code:String(1000+Math.random()*9000|0),host:u,hostName:S.profile.name,status:'lobby',players:{[u]:newPl()},playerIds:[u],state:{},createdAt:Date.now()});location.hash='#/room/'+r.id};
+ACT.join=el=>{location.hash='#/room/'+el.dataset.v};
+ACT.joinCode=async()=>{const c=$('#jc').value.trim();if(!c)return;const s=await getDocs(query(collection(db,'rooms'),where('code','==',c),limit(5)));const d=s.docs.find(x=>x.data().status==='lobby'||x.data().playerIds.includes(S.user.uid));if(!d)return toast('الكود ده مش صح أو الغرفة بدأت','bad');location.hash='#/room/'+d.id};
+function viewGames(){
+  const mp=Object.entries(G).map(([k,g])=>`<div class="card game"><div class="gi">${g.icon}</div><h3>${g.name}</h3><p>${g.desc}</p><button class="btn" data-a="mk" data-v="${k}">إنشاء غرفة</button></div>`).join('');
+  view().innerHTML=`<h2>🌐 ألعاب جماعية مباشرة</h2><div class="grid2">${mp}</div>
+  <div class="card"><b>ادخل بكود غرفة</b><div class="row"><input id="jc" inputmode="numeric" placeholder="كود من 4 أرقام" data-enter="joinCode"><button class="btn" data-a="joinCode">دخول</button></div></div>
+  <h2>🔴 الغرف المفتوحة</h2><div id="rooms" class="list"></div>
+  <h2>🧠 تحديات فردية</h2><div class="grid2">
+  <a class="card tile" href="#/quiz"><b>🧠 جيمر كويز</b><span>أسئلة عن لعبتك المفضلة</span></a>
+  <a class="card tile" href="#/play/snake"><b>🐍 ثعبان</b><span>كل تفاحة = نقطة</span></a>
+  <a class="card tile" href="#/play/reaction"><b>⚡ رد الفعل</b><span>مين أسرع إيد؟</span></a>
+  <a class="card tile" href="#/play/typing"><b>⌨️ سرعة الكتابة</b><span>اكتب بالعربي بسرعة</span></a></div>`;
+  roomsLive($('#rooms'));
+}
+
+/* ---------- شاشة الغرفة ---------- */
+let CR=null;
+const me=()=>S.user.uid;
+const upd=o=>updateDoc(doc(db,'rooms',CR.id),o);
+function viewRoom(id){
+  const el=view();el.innerHTML='<div class="load">⏳ جاري الدخول للغرفة…</div>';CR=null;
+  listen(onSnapshot(doc(db,'rooms',id),async s=>{
+    if(!s.exists()){toast('الغرفة اتقفلت');location.hash='#/games';return}
+    const r={id:s.id,...s.data()};
+    if(!G[r.game]){location.hash='#/games';return}
+    if(!r.players[me()]){
+      if(r.status==='lobby'&&r.playerIds.length<G[r.game].max){CR=r;await updateDoc(doc(db,'rooms',id),{[`players.${me()}`]:newPl(),playerIds:arrayUnion(me())});return}
+      toast('الغرفة دي شغالة أو كاملة','bad');location.hash='#/games';return}
+    CR=r;paint(el);
+  }));
+  const iv=setInterval(()=>{if(CR&&CR.status==='playing'){try{G[CR.game].tick?.(CR)}catch(e){console.error(e)}}},500);
+  listen(()=>clearInterval(iv));
+}
+function paint(el){
+  const ae=document.activeElement,keep=ae&&ae.id&&el.contains(ae)?{id:ae.id,v:ae.value,s:ae.selectionStart}:null;
+  const r=CR,g=G[r.game],host=r.host===me();
+  const pls=r.playerIds.map(u=>r.players[u]?`<span class="pl ${r.status==='playing'&&g.turn&&g.turn(r)===u?'turn':''}">${r.players[u].avatar} ${esc(r.players[u].name)} ${u===r.host?'👑':''} <b class="gold">${r.players[u].score||0}</b></span>`:'').join('');
+  let body;
+  if(r.status==='lobby')body=`<div class="card center"><div style="font-size:48px">${g.icon}</div><h2>${g.name}</h2><p class="muted">${g.desc}</p><div class="code">كود الغرفة <b>${r.code}</b></div><p class="muted">اللاعبين ${r.playerIds.length}/${g.max} • لازم ${g.min} على الأقل</p>
+    ${host?`<div class="row"><button class="btn gold" data-a="start" ${r.playerIds.length<g.min?'disabled':''}>▶ ابدأ اللعب</button></div>`:'<p>⏳ مستني الهوست يبدأ…</p>'}</div>`;
+  else body=g.render(r);
+  el.innerHTML=`<div class="row" style="justify-content:space-between"><button class="btn ghost sm" data-a="leave">⬅ خروج</button><span class="chip">${g.icon} ${g.name} • #${r.code}</span>${host?'<button class="btn ghost sm" data-a="delroom">🗑 حذف الغرفة</button>':'<span></span>'}</div><div class="center" style="margin:8px 0">${pls}</div>${body}`;
+  if(keep){const n=document.getElementById(keep.id);if(n){n.value=keep.v;n.focus();try{n.setSelectionRange(keep.s,keep.s)}catch{}}}
+  g.after?.(r);
+}
+ACT.start=async()=>{const g=G[CR.game];if(CR.playerIds.length<g.min)return toast(`محتاجين ${g.min} لاعبين على الأقل`,'bad');const st=await g.start(CR);const o={status:'playing',state:st};CR.playerIds.forEach(u=>o[`players.${u}.score`]=0);await upd(o)};
+ACT.tolobby=()=>{const o={status:'lobby',state:{}};CR.playerIds.forEach(u=>o[`players.${u}.score`]=0);return upd(o)};
+ACT.delroom=async()=>{const id=CR.id;await deleteDoc(doc(db,'rooms',id));location.hash='#/games'};
+ACT.leave=async()=>{const r=CR,others=r.playerIds.filter(u=>u!==me());location.hash='#/games';
+  if(!others.length){await deleteDoc(doc(db,'rooms',r.id));return}
+  const o={[`players.${me()}`]:deleteField(),playerIds:arrayRemove(me())};if(r.host===me()){o.host=others[0];o.hostName=r.players[others[0]].name}
+  await updateDoc(doc(db,'rooms',r.id),o)};
+const hostBtns=r=>r.host===me()?`<div class="row" style="margin-top:10px"><button class="btn" data-a="tolobby">↩ رجوع للوبي</button></div>`:'<p class="muted">مستني الهوست…</p>';
+const rankHTML=(r,title)=>{const a=r.playerIds.filter(u=>r.players[u]).map(u=>r.players[u]).sort((x,y)=>y.score-x.score);return `<div class="card center"><h2>${title}</h2>${a.map((x,i)=>`<div class="rk"><span>${['🥇','🥈','🥉'][i]||i+1}</span><span>${x.avatar} ${esc(x.name)}</span><b>${x.score}</b></div>`).join('')}${hostBtns(r)}</div>`};
+const isTop=r=>{const m=Math.max(...r.playerIds.map(u=>r.players[u]?.score||0));return (r.players[me()]?.score||0)===m&&m>0};
+
+/* ===== لعبة 1: خمّن اللعبة ===== */
+const ROUND=45000;
+const imgs={};const getImg=u=>{if(!imgs[u]){const i=new Image();i.src=u;imgs[u]=i}return imgs[u]};
+function rng(s){return()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function order16(seed){const r=rng(seed),a=[...Array(16).keys()];for(let i=15;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function drawPuzzle(cv,p,hidden,ord){
+  const c=cv.getContext('2d'),W=cv.width;const g=c.createLinearGradient(0,0,W,W);g.addColorStop(0,'#1b2a7a');g.addColorStop(1,'#5a22b8');c.fillStyle=g;c.fillRect(0,0,W,W);
+  c.textAlign='center';c.textBaseline='middle';
+  if(p.img){const i=getImg(p.img);if(i.complete&&i.naturalWidth){const s=Math.max(W/i.naturalWidth,W/i.naturalHeight),w=i.naturalWidth*s,h=i.naturalHeight*s;c.drawImage(i,(W-w)/2,(W-h)/2,w,h)}else{c.fillStyle='#fff';c.font='20px Cairo';c.fillText('تحميل الصورة…',W/2,W/2)}}
+  else{c.fillStyle='#fff';c.font=((p.emoji||'').length>3?W*.3:W*.55)+'px serif';c.fillText(p.emoji||'❓',W/2,W/2+W*.03)}
+  const t=W/4;
+  for(let k=0;k<hidden;k++){const i=ord[k],x=(i%4)*t,y=Math.floor(i/4)*t;c.fillStyle='#0b1030';c.fillRect(x,y,t,t);c.strokeStyle='#2f7bff66';c.strokeRect(x+.5,y+.5,t-1,t-1);c.fillStyle='#8b3dff';c.font='bold '+t*.45+'px Changa';c.fillText('?',x+t/2,y+t/2)}
+}
+function gInfo(r){const st=r.state,p=st.seq[st.round],m=Math.min(14,4+(p.level||1)*2),el=Date.now()-st.rStart;return{p,m,el,hidden:st.phase==='play'?Math.max(0,m-Math.floor(el/(ROUND/(m+1)))):0}}
+const G={};
+G.guess={name:'خمّن اللعبة',icon:'🧩',desc:'بازل ناقص أجزاء… خمّن اللعبة قبل ما الأجزاء تظهر! 5 جولات بمستويات',min:1,max:8,
+  async start(){let ps=[];try{ps=(await getDocs(collection(db,'puzzles'))).docs.map(d=>d.data())}catch{}
+    const seq=shuffle([...BUILTIN_PUZZLES,...ps]).slice(0,5).sort((a,b)=>(a.level||1)-(b.level||1));
+    return{phase:'play',round:0,total:seq.length,seq,rStart:Date.now(),solved:{},v:Date.now()}},
+  render(r){const st=r.state;if(st.phase==='end')return rankHTML(r,'🏁 خلصت اللعبة!');
+    const {p}=gInfo(r),rev=st.phase==='reveal',mine=st.solved[me()];
+    const sv=Object.entries(st.solved).map(([u,x])=>`<span class="chip ok">${esc(r.players[u]?.name)} +${x}</span>`).join('');
+    return `<div class="card center"><div class="muted">الجولة ${st.round+1}/${st.total} • مستوى ${p.level||1} <span id="gt" class="chip"></span></div><canvas id="gc" width="320" height="320"></canvas>
+    ${rev?`<h2 class="ok">${esc(p.answer)}</h2>`:mine?`<h3 class="ok">جبتها! +${mine} ✅</h3>`:`<div class="row"><input id="gi" placeholder="اكتب اسم اللعبة" autocomplete="off" data-enter="gguess"><button class="btn" data-a="gguess">خمّن</button></div>`}
+    <div>${sv}</div></div>`},
+  after(r){this.draw(r)},
+  draw(r){const st=r.state;if(st.phase==='end')return;const cv=$('#gc');if(!cv)return;const {p,el,hidden}=gInfo(r);drawPuzzle(cv,p,hidden,order16(st.v+st.round*77));const t=$('#gt');if(t)t.textContent=st.phase==='play'?'⏱ '+Math.max(0,Math.ceil((ROUND-el)/1000))+'ث':'⏸'},
+  tick(r){this.draw(r);const st=r.state;
+    if(st.phase==='end'){lock('gf'+r.id+st.v,()=>finalize('g'+r.id+st.v,{xp:Math.round((r.players[me()]?.score||0)/2)+20,win:isTop(r)}));return}
+    if(r.host!==me())return;
+    if(st.phase==='play'){if(r.playerIds.every(u=>st.solved[u])||Date.now()-st.rStart>ROUND+800)lock('gr'+st.round+st.v,()=>upd({'state.phase':'reveal','state.rEnd':Date.now()}))}
+    else if(st.phase==='reveal'&&Date.now()-st.rEnd>4000)lock('gn'+st.round+st.v,()=>st.round+1>=st.total?upd({'state.phase':'end'}):upd({'state.phase':'play','state.round':st.round+1,'state.rStart':Date.now(),'state.solved':{}}))}};
+ACT.gguess=async()=>{const inp=$('#gi');if(!inp)return;const v=norm(inp.value);if(!v)return;const st=CR.state;if(st.phase!=='play'||st.solved[me()])return;
+  const {p,m,hidden}=gInfo(CR);const ok=[p.answer,...(p.aliases||[])].some(a=>norm(a)===v);
+  if(!ok){inp.value='';inp.classList.add('shake');setTimeout(()=>inp.classList.remove('shake'),400);toast('غلط… جرّب تاني','bad');return}
+  const pts=Math.round(20+80*hidden/m);await upd({[`state.solved.${me()}`]:pts,[`players.${me()}.score`]:increment(pts)});toast('صح! +'+pts,'ok')};
+
+/* ===== لعبة 2: برا السالفة ===== */
+G.spy={name:'برا السالفة',icon:'🕵️',desc:'واحد منكم مش عارف الكلمة… اكتشفوه قبل ما يكتشفها!',min:3,max:8,
+  start(r){const cat=pick(Object.keys(SPY)),words=SPY[cat];return{phase:'talk',cat,words,word:pick(words),spy:pick(r.playerIds),votes:{},v:Date.now()}},
+  render(r){const st=r.state,isSpy=me()===st.spy,host=r.host===me();
+    if(st.phase==='talk')return `<div class="card center"><div class="muted">الفئة: <b>${esc(st.cat)}</b></div>
+      ${isSpy?`<div class="secret bad">🕵️ أنت برا السالفة!<br><small>اكتشف الكلمة من كلام الباقي من غير ما حد يكشفك</small></div>`:`<div class="secret ok">الكلمة: ${esc(st.word)}</div><p class="muted">اتكلموا عنها بدون ما تقولوها صريح</p>`}
+      <p class="muted">اتناقشوا (صوت أو شات برّه) وبعدين الهوست يبدأ التصويت</p>${host?'<button class="btn gold" data-a="svote">🗳 ابدأ التصويت</button>':''}</div>`;
+    if(st.phase==='vote'){const mv=st.votes[me()];return `<div class="card center"><h2>🗳 مين برا السالفة؟</h2><p class="muted">صوّت (${Object.keys(st.votes).length}/${r.playerIds.length})</p>
+      ${r.playerIds.filter(u=>u!==me()&&r.players[u]).map(u=>`<button class="opt ${mv===u?'good':''}" data-a="scast" data-v="${u}" ${mv?'disabled':''}>${r.players[u].avatar} ${esc(r.players[u].name)}</button>`).join('')}</div>`}
+    if(st.phase==='spyguess')return `<div class="card center"><h2>🎯 الجاسوس اتكشف!</h2>${isSpy?`<p>عندك فرصة أخيرة… الكلمة إيه؟</p>${st.words.map(w=>`<button class="opt" data-a="sguess" data-v="${esc(w)}">${esc(w)}</button>`).join('')}`:'<p class="muted">⏳ الجاسوس بيحاول يخمّن الكلمة…</p>'}</div>`;
+    const sp=r.players[st.spy];return `<div class="card center"><h2>${st.outcome==='spyWin'?'🕵️ الجاسوس كسب!':'🎉 الفريق كسب!'}</h2><p>الجاسوس كان: <b class="gold">${sp?sp.avatar+' '+esc(sp.name):'؟'}</b></p><p>الكلمة: <b class="ok">${esc(st.word)}</b>${st.guess?`<br><span class="muted">تخمين الجاسوس: ${esc(st.guess)}</span>`:''}</p>
+      ${host?'<div class="row"><button class="btn gold" data-a="snew">🔄 جولة جديدة</button><button class="btn ghost" data-a="tolobby">↩ لوبي</button></div>':'<p class="muted">مستني الهوست…</p>'}</div>`},
+  tick(r){const st=r.state;
+    if(st.phase==='result'){const win=(st.outcome==='spyWin')===(me()===st.spy);lock('sf'+r.id+st.v,()=>finalize('s'+r.id+st.v,{xp:win?(me()===st.spy?60:40):15,win,extra:win&&me()===st.spy?{spyWins:increment(1)}:{}}));return}
+    if(r.host!==me()||st.phase!=='vote')return;
+    if(Object.keys(st.votes).length>=r.playerIds.length){const t={};Object.values(st.votes).forEach(x=>t[x]=(t[x]||0)+1);const a=Object.entries(t).sort((x,y)=>y[1]-x[1]);const tie=a[1]&&a[1][1]===a[0][1];
+      lock('sv'+st.v,()=>!tie&&a[0][0]===st.spy?upd({'state.phase':'spyguess'}):spyEnd(r,'spyWin',''))}}};
+function spyEnd(r,outcome,guess){const st=r.state,o={'state.phase':'result','state.outcome':outcome,'state.guess':guess||''};
+  if(outcome==='crewWin')r.playerIds.filter(u=>u!==st.spy).forEach(u=>o[`players.${u}.score`]=increment(50));else o[`players.${st.spy}.score`]=increment(100);return upd(o)}
+ACT.svote=()=>upd({'state.phase':'vote'});
+ACT.scast=el=>upd({[`state.votes.${me()}`]:el.dataset.v});
+ACT.sguess=el=>{const w=el.dataset.v;return spyEnd(CR,norm(w)===norm(CR.state.word)?'spyWin':'crewWin',w)};
+ACT.snew=()=>upd({state:G.spy.start(CR)});
+
+/* ===== لعبة 3: دبل الذاكرة ===== */
+const EMO=['🎮','🕹️','👾','🚀','🔥','⚡','🏆','🎯','💎','👑'];
+G.memory={name:'دبل الذاكرة',icon:'🃏',desc:'اقلب الكروت بالدور وطابق الأزواج… الأكتر أزواج يكسب!',min:2,max:4,
+  turn:r=>r.state?.order?.[r.state.turn],
+  start(r){return{cards:shuffle([...EMO,...EMO]),flipped:[],matched:[],turn:0,order:[...r.playerIds],done:false,v:Date.now()}},
+  render(r){const st=r.state,t=st.order[st.turn],tp=r.players[t];
+    const grid=`<div class="mem">${st.cards.map((c,i)=>{const m=st.matched.includes(i),o=st.flipped.includes(i);return `<button class="mc ${m?'done':o?'open':''}" data-a="mflip" data-v="${i}">${m||o?c:'❔'}</button>`}).join('')}</div>`;
+    if(st.done)return grid+rankHTML(r,'🏁 خلصت اللعبة!');
+    return `<div class="card center"><h3>${t===me()?'🔥 دورك!':'الدور على '+(tp?esc(tp.name):'؟')}</h3>${grid}${r.host===me()?'<button class="btn ghost sm" data-a="mskip">⏭ تخطي الدور</button>':''}</div>`},
+  tick(r){const st=r.state;
+    if(st.done){lock('mf'+r.id+st.v,()=>finalize('m'+r.id+st.v,{xp:(r.players[me()]?.score||0)/2+15|0,win:isTop(r)}));return}
+    if(st.flipped.length>=2&&st.order[st.turn]===me()){const [a,b]=st.flipped;
+      lock('mr'+st.v+st.matched.length+st.turn+a+'-'+b,()=>new Promise(res=>setTimeout(res,900)).then(()=>{
+        if(st.cards[a]===st.cards[b]){const o={'state.matched':arrayUnion(a,b),'state.flipped':[],[`players.${me()}.score`]:increment(10)};if(st.matched.length+2>=st.cards.length)o['state.done']=true;return upd(o)}
+        return upd({'state.flipped':[],'state.turn':(st.turn+1)%st.order.length})}))}}};
+ACT.mflip=el=>{const i=+el.dataset.v,st=CR.state;if(st.order[st.turn]!==me()||st.matched.includes(i)||st.flipped.includes(i)||st.flipped.length>=2)return;return upd({'state.flipped':arrayUnion(i)})};
+ACT.mskip=()=>upd({'state.flipped':[],'state.turn':(CR.state.turn+1)%CR.state.order.length});
+
+/* ===== لعبة 4: خمّن الشخصية ===== */
+const MAXQ=20;
+G.who={name:'خمّن الشخصية',icon:'🎭',desc:'واحد يفكر في شخصية أو لعبة والباقي يسألوه أسئلة نعم/لا ويخمّنوا!',min:2,max:8,
+  turn:r=>r.state?.thinker,
+  start(r){return{phase:'pick',thinker:pick(r.playerIds),secret:'',qa:{},v:Date.now()}},
+  render(r){const st=r.state,th=st.thinker,isTh=me()===th,tp=r.players[th];
+    const qa=Object.entries(st.qa).sort((a,b)=>a[0].localeCompare(b[0]));const nq=qa.filter(([,x])=>x.t==='q').length;
+    if(st.phase==='pick')return `<div class="card center"><h2>🎭 اللي بيفكر: ${tp?esc(tp.name):'؟'}</h2>${isTh?`<p>اكتب شخصية أو لعبة أو حاجة في دماغك (محدش هيشوفها)</p><input id="wi" placeholder="مثال: ميسي" autocomplete="off" data-enter="wpick"><button class="btn gold" data-a="wpick">تمام</button>`:'<p class="muted">⏳ مستنيينه يختار…</p>'}</div>`;
+    if(st.phase==='ask'){const list=qa.map(([k,x])=>`<div class="qa"><b>${esc(x.n)}:</b> ${x.t==='g'?'🎯 تخمين — ':''}${esc(x.q)} ${x.a?`<b class="${x.a==='نعم'||x.a==='صح'?'ok':'bad'}"> ← ${x.a}</b>`:isTh?`<div class="row" style="margin-top:6px">${(x.t==='g'?['صح','غلط']:['نعم','لا','ممكن']).map(a=>`<button class="btn sm ${a==='لا'||a==='غلط'?'ghost':''}" data-a="wans" data-k="${k}" data-v="${a}">${a}</button>`).join('')}</div>`:'<span class="muted"> ⏳</span>'}</div>`).join('');
+      return `<div class="card center"><h3>🎭 ${isTh?'إنت اللي بتفكر في: <span class="gold">'+esc(st.secret)+'</span>':'اسأل أو خمّن! اللي بيفكر: '+(tp?esc(tp.name):'')}</h3><p class="muted">الأسئلة ${nq}/${MAXQ}</p>
+      ${isTh?`<button class="btn ghost sm" data-a="wreveal">🏳 اكشف الإجابة</button>`:`<div class="row"><input id="wq" placeholder="اكتب سؤالك أو تخمينك" autocomplete="off"><button class="btn sm" data-a="wask" data-v="q" ${nq>=MAXQ?'disabled':''}>❓ اسأل</button><button class="btn sm gold" data-a="wask" data-v="g">🎯 خمّن</button></div>`}
+      <div style="margin-top:10px">${list||'<p class="muted">لسه مفيش أسئلة</p>'}</div></div>`}
+    const w=st.winner?r.players[st.winner]:null;
+    return `<div class="card center"><h2>${w?'🎉 '+esc(w.name)+' خمّنها!':st.noPts?'🏳 اتكشفت الإجابة':'🧠 اللي بيفكر كسب!'}</h2><p>الإجابة: <b class="gold">${esc(st.secret)}</b></p>
+      ${r.host===me()?'<div class="row"><button class="btn gold" data-a="wnew">🔄 جولة جديدة</button><button class="btn ghost" data-a="tolobby">↩ لوبي</button></div>':'<p class="muted">مستني الهوست…</p>'}</div>`},
+  tick(r){const st=r.state;if(st.phase==='result'){const win=st.winner?me()===st.winner:(me()===st.thinker&&!st.noPts);lock('wf'+r.id+st.v,()=>finalize('w'+r.id+st.v,{xp:win?45:15,win}))}}};
+ACT.wpick=()=>{const v=$('#wi').value.trim();if(!v)return;return upd({'state.secret':v,'state.phase':'ask'})};
+ACT.wask=el=>{const t=el.dataset.v,txt=$('#wq').value.trim();if(!txt)return;const k=Date.now()+'_'+me().slice(0,4);return upd({[`state.qa.${k}`]:{u:me(),n:S.profile.name,t,q:txt,a:null}})};
+function wend(winner,noPts){const st=CR.state,o={'state.phase':'result','state.winner':winner||null,'state.noPts':!!noPts};
+  if(!noPts){if(winner){o[`players.${winner}.score`]=increment(80);o[`players.${st.thinker}.score`]=increment(30)}else o[`players.${st.thinker}.score`]=increment(50)}return upd(o)}
+ACT.wans=async el=>{const k=el.dataset.k,a=el.dataset.v,it=CR.state.qa[k];if(!it||it.a)return;await upd({[`state.qa.${k}.a`]:a});
+  if(it.t==='g'&&a==='صح')return wend(it.u);
+  const nq=Object.values(CR.state.qa).filter(x=>x.t==='q').length;if(it.t==='q'&&nq>=MAXQ)return wend(null)};
+ACT.wreveal=()=>wend(null,true);
+ACT.wnew=()=>{const st=CR.state,ids=CR.playerIds,n=ids[(ids.indexOf(st.thinker)+1)%ids.length];return upd({state:{phase:'pick',thinker:n,secret:'',qa:{},v:Date.now()}})};
+
+/* ---------- جيمر كويز (فردي) ---------- */
+function viewQuiz(){
+  view().innerHTML=`<h2>🧠 جيمر كويز</h2><p class="muted">اختار لعبتك — 10 أسئلة، 20 ثانية للسؤال، وكل ثانية متبقية بتزود نقاطك</p><div class="grid2">${Object.entries(QG).map(([k,g])=>`<button class="card tile" data-a="qstart" data-v="${k}"><b>${g.icon} ${g.name}</b><span>ابدأ التحدي</span></button>`).join('')}</div>`;
+}
+let Q=null;
+ACT.qstart=async el=>{const k=el.dataset.v;let list=[];try{list=(await getDocs(query(collection(db,'quizQuestions'),where('game','==',k)))).docs.map(d=>d.data())}catch{}
+  if(!list.length)list=BUILTIN_Q.filter(x=>x.game===k);
+  if(!list.length)return toast('لسه مفيش أسئلة للعبة دي — الأدمن هيضيفها قريب','bad');
+  const qs=shuffle(list).slice(0,10).map(x=>{const cor=x.o[x.c],o=shuffle(x.o);return{q:x.q,o,c:o.indexOf(cor)}});
+  Q={k,qs,i:0,score:0,right:0,t:20,locked:false};showQ();
+  const iv=setInterval(()=>{if(!Q||Q.locked)return;Q.t--;const t=$('#qt');if(t)t.textContent='⏱ '+Q.t;if(Q.t<=0)answer(-1)},1000);listen(()=>{clearInterval(iv);Q=null})};
+function showQ(){const q=Q.qs[Q.i];Q.t=20;Q.locked=false;
+  view().innerHTML=`<div class="card"><div class="row" style="justify-content:space-between"><span class="chip">${QG[Q.k].icon} ${QG[Q.k].name}</span><span class="chip">السؤال ${Q.i+1}/${Q.qs.length}</span><span class="chip gold" id="qt">⏱ 20</span><span class="chip ok">${Q.score} نقطة</span></div>
+  <div class="bar"><i style="width:${Q.i/Q.qs.length*100}%"></i></div><h3 style="margin:16px 0">${esc(q.q)}</h3>${q.o.map((o,i)=>`<button class="opt" data-a="qans" data-v="${i}">${esc(o)}</button>`).join('')}</div>`}
+ACT.qans=el=>answer(+el.dataset.v);
+function answer(i){if(!Q||Q.locked)return;Q.locked=true;const q=Q.qs[Q.i];
+  document.querySelectorAll('.opt').forEach((b,j)=>{if(j===q.c)b.classList.add('good');else if(j===i)b.classList.add('wrong')});
+  if(i===q.c){Q.right++;Q.score+=10+Math.ceil(Q.t/2);toast('صح! ✅','ok')}else toast(i<0?'الوقت خلص ⏰':'غلط ❌','bad');
+  setTimeout(()=>{if(!Q)return;Q.i++;if(Q.i>=Q.qs.length)endQuiz();else showQ()},1100)}
+async function endQuiz(){const {k,score,right,qs}=Q,tot=qs.length;Q.locked=true;
+  view().innerHTML=`<div class="card center"><div style="font-size:54px">${right===tot?'🏆':right>=tot*.7?'🎉':'💪'}</div><h2>خلصت! ${right}/${tot} صح</h2><h1 class="gold">${score} نقطة</h1><div class="row"><button class="btn" data-a="qstart" data-v="${k}">🔄 تاني</button><a class="btn ghost" href="#/quiz">لعبة تانية</a></div></div>`;
+  await finalize('q'+Date.now(),{xp:score,win:right>=tot*.7,extra:right===tot?{'scores.quizPerfect':increment(1)}:{}});await best('quiz',score)}
+
+/* ---------- الألعاب الفردية المدمجة ---------- */
+function viewPlay(g){const el=view();({snake:playSnake,reaction:playReaction,typing:playTyping}[g]||playSnake)(el)}
+function playSnake(el){
+  el.innerHTML=`<div class="card center"><h2>🐍 ثعبان</h2><div class="chip">النقاط: <b id="sc">0</b> • أفضل نتيجة: ${S.profile.scores?.snake||0}</div><br><canvas id="cv" width="300" height="300"></canvas>
+  <div class="dpad"><button data-d="U">▲</button><div><button data-d="L">◀</button><button data-d="D">▼</button><button data-d="R">▶</button></div></div><button class="btn gold" id="go">▶ ابدأ</button></div>`;
+  const cv=$('#cv'),c=cv.getContext('2d'),N=15,T=20;let sn,dir,nd,food,sc,iv,alive=false;
+  const M={U:{x:0,y:-1},D:{x:0,y:1},L:{x:-1,y:0},R:{x:1,y:0}};
+  const setDir=d=>{const m=M[d];if(m&&!(m.x===-dir.x&&m.y===-dir.y))nd=m};
+  function place(){do{food={x:Math.random()*N|0,y:Math.random()*N|0}}while(sn.some(s=>s.x===food.x&&s.y===food.y))}
+  function reset(){sn=[{x:7,y:7},{x:6,y:7},{x:5,y:7}];dir=nd=M.R;sc=0;place();$('#sc').textContent=0;draw()}
+  function draw(){c.fillStyle='#0b1030';c.fillRect(0,0,300,300);c.fillStyle='#ffb400';c.beginPath();c.arc(food.x*T+10,food.y*T+10,7,0,7);c.fill();sn.forEach((s,i)=>{c.fillStyle=i?'#2f7bff':'#8b3dff';c.fillRect(s.x*T+1,s.y*T+1,T-2,T-2)})}
+  function step(){dir=nd;const h={x:sn[0].x+dir.x,y:sn[0].y+dir.y};if(h.x<0||h.y<0||h.x>=N||h.y>=N||sn.some(s=>s.x===h.x&&s.y===h.y))return over();sn.unshift(h);if(h.x===food.x&&h.y===food.y){sc++;$('#sc').textContent=sc;place()}else sn.pop();draw()}
+  async function over(){clearInterval(iv);alive=false;toast('خسرت! نقاطك '+sc,'bad');$('#go').style.display='';$('#go').textContent='🔄 العب تاني';if(sc>0){await finalize('sn'+Date.now(),{xp:sc*3+5,win:false});await best('snake',sc)}}
+  $('#go').onclick=()=>{reset();alive=true;$('#go').style.display='none';clearInterval(iv);iv=setInterval(step,115)};
+  el.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>setDir(b.dataset.d));
+  const kh=e=>{const m={ArrowUp:'U',ArrowDown:'D',ArrowLeft:'L',ArrowRight:'R'}[e.key];if(m&&alive){e.preventDefault();setDir(m)}};
+  document.addEventListener('keydown',kh);let sx,sy;
+  cv.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
+  cv.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(Math.max(Math.abs(dx),Math.abs(dy))<20)return;setDir(Math.abs(dx)>Math.abs(dy)?(dx>0?'R':'L'):(dy>0?'D':'U'))});
+  listen(()=>{clearInterval(iv);document.removeEventListener('keydown',kh)});reset();
+}
+function playReaction(el){
+  let n=0,times=[],t0,to,state='idle';
+  el.innerHTML=`<div class="card center"><h2>⚡ رد الفعل</h2><p class="muted">اضغط أول ما اللون يبقى أخضر — 5 محاولات • أفضل متوسط: ${S.profile.scores?.reaction?S.profile.scores.reaction+'ms':'—'}</p><div id="rb" class="react">اضغط للبدء</div><div id="rr" class="muted"></div></div>`;
+  const rb=$('#rb');
+  function start(){state='wait';rb.className='react wait';rb.textContent='استنى…';to=setTimeout(()=>{state='go';rb.className='react go';rb.textContent='دوس!!';t0=Date.now()},1500+Math.random()*2500)}
+  async function end(){state='done';const avg=Math.round(times.reduce((a,b)=>a+b)/times.length);rb.className='react';rb.textContent=`متوسطك ${avg}ms — اضغط للإعادة`;await finalize('re'+Date.now(),{xp:Math.max(5,Math.round((600-avg)/10)),win:false});await best('reaction',avg,false)}
+  rb.onclick=()=>{
+    if(state==='idle'||state==='done'){if(state==='done'){n=0;times=[];$('#rr').textContent=''}start()}
+    else if(state==='wait'){clearTimeout(to);state='idle';rb.className='react bad';rb.textContent='بدري! اضغط تاني'}
+    else if(state==='go'){const t=Date.now()-t0;times.push(t);n++;$('#rr').textContent=times.map(x=>x+'ms').join(' • ');if(n>=5)end();else{state='idle';rb.className='react';rb.textContent=t+'ms — اضغط للمحاولة '+(n+1)}}};
+  listen(()=>clearTimeout(to));
+}
+const TXT=['الصبر مفتاح الفرج واللي يجتهد يوصل لهدفه','لعبنا واتحمسنا وكسبنا الجولة في آخر ثانية','الفريق القوي بيتبني بالتعاون مش بالأسماء','كل لاعب محترف بدأ مرة من الصفر وكمل','سرعة الأصابع مع تركيز العقل بتصنع البطل'];
+function playTyping(el){
+  const t=pick(TXT);let st=0,done=false;
+  el.innerHTML=`<div class="card center"><h2>⌨️ سرعة الكتابة</h2><p class="muted">اكتب الجملة بالظبط — أفضل سرعة: ${S.profile.scores?.typing||0} كلمة/دقيقة</p><div class="ttxt">${esc(t)}</div><textarea id="ti" rows="2" placeholder="ابدأ الكتابة هنا…"></textarea><div id="tr" class="chip">⏱ 0.0ث</div><br><a class="btn ghost sm" href="#/play/typing" data-a="again" style="margin-top:8px">🔄 جملة جديدة</a></div>`;
+  const ti=$('#ti');const iv=setInterval(()=>{if(st&&!done)$('#tr').textContent='⏱ '+((Date.now()-st)/1000).toFixed(1)+'ث'},100);listen(()=>clearInterval(iv));
+  ti.oninput=async()=>{if(!st)st=Date.now();if(!done&&norm(ti.value)===norm(t)){done=true;ti.disabled=true;const s=(Date.now()-st)/1000,wpm=Math.round(t.split(' ').length/(s/60));$('#tr').textContent=`✅ ${s.toFixed(1)}ث = ${wpm} كلمة/دقيقة`;await finalize('ty'+Date.now(),{xp:Math.round(wpm/3)+5,win:false});await best('typing',wpm)}};
+}
+ACT.again=()=>viewPlay('typing');
+
+/* ---------- المتصدرين ---------- */
+const LBT={xp:{n:'⭐ النقاط',f:'xp',d:'desc',u:' XP'},wins:{n:'🏆 انتصارات',f:'wins',d:'desc',u:' فوز'},quiz:{n:'🧠 كويز',f:'scores.quiz',d:'desc',u:' نقطة'},snake:{n:'🐍 ثعبان',f:'scores.snake',d:'desc',u:' نقطة'},reaction:{n:'⚡ رد الفعل',f:'scores.reaction',d:'asc',u:'ms'},typing:{n:'⌨️ كتابة',f:'scores.typing',d:'desc',u:' ك/د'}};
+function viewLB(){view().innerHTML=`<h2>🏅 المتصدرين</h2><div class="tabs">${Object.entries(LBT).map(([k,v])=>`<button class="btn ghost sm" data-a="lbtab" data-v="${k}">${v.n}</button>`).join('')}</div><div id="lb" class="card"></div>`;ACT.lbtab({dataset:{v:'xp'}})}
+ACT.lbtab=async el=>{const k=el.dataset.v,t=LBT[k];document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===k));const box=$('#lb');if(!box)return;box.innerHTML='<div class="load">⏳</div>';
+  const s=await getDocs(query(collection(db,'users'),orderBy(t.f,t.d),limit(20)));
+  box.innerHTML=s.docs.map((d,i)=>{const u=d.data();return `<div class="rk ${d.id===S.user.uid?'me':''}"><span>${['🥇','🥈','🥉'][i]||i+1}</span><span>${u.avatar} ${esc(u.name)} <span class="chip">Lv ${lvl(u.xp)}</span></span><b class="gold">${getp(u,t.f)}${t.u}</b></div>`}).join('')||'<p class="muted center">لسه مفيش نتائج هنا — كن الأول!</p>'};
+
+/* ---------- الفعاليات ---------- */
+const EVI={tournament:'🏆',challenge:'⚡',event:'🎉'},EVN={tournament:'بطولة',challenge:'تحدي',event:'فعالية'};
+let EVC={};
+function viewEvents(){
+  view().innerHTML=`<h2>📅 البطولات والفعاليات</h2><div id="evs"></div>`;
+  listen(onSnapshot(query(collection(db,'events'),orderBy('date','desc')),s=>{
+    EVC={};const now=Date.now();
+    $('#evs').innerHTML=s.docs.map(d=>{const e=d.data();EVC[d.id]=e;const ps=Object.values(e.p||{}),joined=!!(e.p||{})[me()],past=e.date<now;
+      return `<div class="card"><div class="row" style="justify-content:space-between"><b style="font:700 19px Changa">${EVI[e.type]||'📅'} ${esc(e.title)}</b><span class="tag">${EVN[e.type]||''}</span></div>
+      <p class="muted">${esc(e.desc||'')}</p><div>${e.game?`<span class="chip">🎮 ${esc(e.game)}</span>`:''}<span class="chip">🕒 ${fmtD(e.date)}</span>${e.prize?`<span class="chip gold">🎁 ${esc(e.prize)}</span>`:''}<span class="chip">${past?'انتهت':'قادمة'}</span></div>
+      ${e.winner?`<p class="gold">🏆 الفائز: ${esc(e.winner)}</p>`:''}
+      <div class="muted" style="margin:8px 0">المشاركين (${ps.length}): ${ps.map(p=>p.avatar+' '+esc(p.name)).join('، ')||'—'}</div>
+      <div class="row">${past?'':`<button class="btn sm ${joined?'ghost':''}" data-a="evjoin" data-v="${d.id}">${joined?'إلغاء المشاركة':'سجّل مشاركتك'}</button>`}
+      ${S.admin?`<button class="btn sm gold" data-a="evwin" data-v="${d.id}">🏆 إعلان فائز</button><button class="btn sm ghost" data-a="del" data-c="events" data-v="${d.id}">🗑</button>`:''}</div></div>`}).join('')||'<p class="muted center">مفيش فعاليات لسه — استنوا إعلان الأدمن!</p>'}));
+}
+ACT.evjoin=el=>{const id=el.dataset.v,e=EVC[id];const j=!!(e?.p||{})[me()];return updateDoc(doc(db,'events',id),{[`p.${me()}`]:j?deleteField():{name:S.profile.name,avatar:S.profile.avatar}})};
+ACT.evwin=el=>{const n=prompt('اسم الفائز؟');if(n)return updateDoc(doc(db,'events',el.dataset.v),{winner:n})};
+ACT.del=async el=>{if(!confirm('متأكد من الحذف؟'))return;await deleteDoc(doc(db,el.dataset.c,el.dataset.v));if(el.dataset.c!=='events')adminTab(AT)};
+
+/* ---------- البروفايل ---------- */
+let pickedAv=null;
+function viewProfile(){
+  const p=S.profile;pickedAv=p.avatar;const have=new Set(p.badges||[]);
+  view().innerHTML=`<div class="card center"><div style="font-size:64px" id="bigav">${p.avatar}</div><h2>${esc(p.name)}</h2>${xpBar(p)}</div>
+  <div class="card"><div class="stat"><div><b>${p.played||0}</b>ألعاب</div><div><b>${p.wins||0}</b>انتصارات</div><div><b>${p.xp||0}</b>XP</div></div></div>
+  <div class="card"><b>🎖️ الإنجازات</b><div>${BADGES.map(b=>`<span class="badge ${have.has(b.id)?'':'lock'}" title="${b.d}">${b.n}${have.has(b.id)?'':' — '+b.d}</span>`).join('')}</div></div>
+  <div class="card"><b>✏️ تعديل البروفايل</b><div class="av">${AV.map(a=>`<button data-a="pickav" data-v="${a}" class="${a===p.avatar?'on':''}">${a}</button>`).join('')}</div><input id="pn" value="${esc(p.name)}" maxlength="16"><button class="btn" style="margin-top:6px" data-a="saveprof">حفظ</button></div>
+  <button class="btn ghost" data-a="logout" style="width:100%">تسجيل خروج</button>`;
+}
+ACT.pickav=el=>{pickedAv=el.dataset.v;document.querySelectorAll('.av button').forEach(b=>b.classList.toggle('on',b.dataset.v===pickedAv));$('#bigav').textContent=pickedAv};
+ACT.saveprof=async()=>{const n=$('#pn').value.trim();if(n.length<2)return toast('الاسم قصير','bad');await updateDoc(doc(db,'users',me()),{name:n,avatar:pickedAv});toast('اتحفظ ✅','ok')};
+
+/* ---------- لوحة الأدمن ---------- */
+let AT='q';
+function viewAdmin(){
+  if(!S.admin){view().innerHTML='<div class="card center">🔒 للأدمن بس</div>';return}
+  view().innerHTML=`<h2>⚙️ لوحة الأدمن</h2><div class="tabs">${[['q','🧠 الأسئلة'],['p','🧩 الألغاز'],['e','📅 الفعاليات'],['u','👥 اللاعبين']].map(([k,n])=>`<button class="btn ghost sm" data-a="atab" data-v="${k}">${n}</button>`).join('')}</div><div id="at"></div>`;adminTab(AT)}
+ACT.atab=el=>adminTab(el.dataset.v);
+async function adminTab(t){AT=t;document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===t));const box=$('#at');if(!box)return;box.innerHTML='<div class="load">⏳</div>';
+  if(t==='q'){const s=await getDocs(collection(db,'quizQuestions'));
+    box.innerHTML=`<div class="card"><b>إضافة سؤال</b><select id="qg">${Object.entries(QG).map(([k,g])=>`<option value="${k}">${g.name}</option>`).join('')}</select><input id="qq" placeholder="السؤال">${[1,2,3,4].map(i=>`<input id="qo${i}" placeholder="الاختيار ${i}">`).join('')}<select id="qc"><option value="0">الإجابة الصحيحة: 1</option><option value="1">الإجابة الصحيحة: 2</option><option value="2">الإجابة الصحيحة: 3</option><option value="3">الإجابة الصحيحة: 4</option></select><button class="btn" data-a="addq">➕ إضافة</button></div>
+    <p class="muted">الأسئلة الافتراضية بتظهر تلقائيًا لحد ما تضيف أسئلة للعبة — Bomb Squad محتاجة أسئلتك.</p>
+    <div class="list">${s.docs.map(d=>{const x=d.data();return `<div class="item"><div class="g"><span class="tag">${QG[x.game]?.name||x.game}</span> ${esc(x.q)}<div class="muted">✔ ${esc(x.o[x.c])}</div></div><button class="btn sm ghost" data-a="del" data-c="quizQuestions" data-v="${d.id}">🗑</button></div>`}).join('')||'<p class="muted">لسه مفيش أسئلة مضافة</p>'}</div>`}
+  if(t==='p'){const s=await getDocs(collection(db,'puzzles'));
+    box.innerHTML=`<div class="card"><b>إضافة لغز "خمّن اللعبة"</b><input id="pa" placeholder="اسم اللعبة (الإجابة)"><input id="pal" placeholder="أسماء بديلة مفصولة بفاصلة (اختياري)"><input id="pi" dir="ltr" placeholder="رابط صورة مباشر (اختياري)"><input id="pe" placeholder="أو إيموجي بدل الصورة (اختياري)"><select id="pl"><option value="1">مستوى 1 (سهل)</option><option value="2">مستوى 2</option><option value="3">مستوى 3</option><option value="4">مستوى 4</option><option value="5">مستوى 5 (صعب)</option></select><button class="btn" data-a="addp">➕ إضافة</button></div>
+    <div class="list">${s.docs.map(d=>{const x=d.data();return `<div class="item"><span style="font-size:24px">${esc(x.emoji||'🖼️')}</span><div class="g">${esc(x.answer)} <span class="tag">Lv ${x.level}</span></div><button class="btn sm ghost" data-a="del" data-c="puzzles" data-v="${d.id}">🗑</button></div>`}).join('')||'<p class="muted">لسه مفيش ألغاز مضافة (فيه 10 افتراضية)</p>'}</div>`}
+  if(t==='e'){box.innerHTML=`<div class="card"><b>إضافة بطولة / تحدي / فعالية</b><select id="et"><option value="tournament">🏆 بطولة</option><option value="challenge">⚡ تحدي</option><option value="event">🎉 فعالية</option></select><input id="etl" placeholder="العنوان"><input id="ed" placeholder="الوصف"><input id="eg" placeholder="اللعبة (اختياري)"><input id="ep" placeholder="الجائزة (اختياري)"><input id="edt" type="datetime-local"><button class="btn" data-a="adde">➕ نشر</button></div><p class="muted">الفعاليات الموجودة بتظهر في صفحة "فعاليات" وتقدر تحذفها أو تعلن فائز من هناك.</p>`}
+  if(t==='u'){const s=await getDocs(query(collection(db,'users'),orderBy('xp','desc'),limit(100)));
+    box.innerHTML=`<div class="list">${s.docs.map(d=>{const u=d.data();return `<div class="item"><span style="font-size:24px">${u.avatar}</span><div class="g">${esc(u.name)}<div class="muted">Lv ${lvl(u.xp)} • ${u.xp} XP • ${u.wins||0} فوز</div></div><button class="btn sm" data-a="gxp" data-v="${d.id}">+50 XP</button></div>`}).join('')}</div>`}}
+ACT.addq=async()=>{const o=[1,2,3,4].map(i=>$('#qo'+i).value.trim()),q=$('#qq').value.trim();if(!q||o.some(x=>!x))return toast('كمّل كل الخانات','bad');await addDoc(collection(db,'quizQuestions'),{game:$('#qg').value,q,o,c:+$('#qc').value});toast('اتضاف ✅','ok');adminTab('q')};
+ACT.addp=async()=>{const a=$('#pa').value.trim(),i=$('#pi').value.trim(),e=$('#pe').value.trim();if(!a||(!i&&!e))return toast('اكتب الإجابة وصورة أو إيموجي','bad');await addDoc(collection(db,'puzzles'),{answer:a,aliases:$('#pal').value.split(/[,،]/).map(x=>x.trim()).filter(Boolean),img:i,emoji:e,level:+$('#pl').value});toast('اتضاف ✅','ok');adminTab('p')};
+ACT.adde=async()=>{const t=$('#etl').value.trim(),d=$('#edt').value;if(!t||!d)return toast('العنوان والموعد مطلوبين','bad');await addDoc(collection(db,'events'),{type:$('#et').value,title:t,desc:$('#ed').value.trim(),game:$('#eg').value.trim(),prize:$('#ep').value.trim(),date:new Date(d).getTime(),p:{},winner:''});toast('اتنشر ✅','ok');$('#etl').value=''};
+ACT.gxp=async el=>{await updateDoc(doc(db,'users',el.dataset.v),{xp:increment(50)});toast('+50 XP','ok');adminTab('u')};
+</script>
+</body>
+</html>
