@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>GZ Arena</title>
 <meta name="theme-color" content="#070a1c">
-<link rel="icon" href="__LOGO__">
+<link rel="icon" href="Logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Changa:wght@500;700;800&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#070a1c;--card:#111838cc;--line:#26307a;--blue:#2f7bff;--purple:#8b3dff;--gold:#ffb400;--text:#eef1ff;--mut:#97a0d0;--ok:#2ee59d;--bad:#ff4d6d}
@@ -89,21 +89,63 @@ canvas{max-width:100%;height:auto;border-radius:16px;border:2px solid var(--line
 .tag{font-size:11px;padding:2px 8px;border-radius:8px;background:#8b3dff44}
 pre{background:#0a0f2a;padding:10px;border-radius:10px;overflow:auto;direction:ltr;text-align:left;font-size:12px}
 @media(min-width:700px){.nav{max-width:520px;margin:auto;border-radius:20px 20px 0 0;border:1px solid var(--line)}}
+
+main{max-width:1080px}
+header .links{display:none;gap:4px;margin-inline-start:14px}
+.links a{padding:6px 14px;border-radius:10px;color:var(--mut);text-decoration:none;font:600 14px Cairo}
+.links a.on,.links a:hover{color:#fff;background:#ffffff14}
+@media(min-width:760px){header .links{display:flex}.nav{display:none}main{padding-bottom:50px}header{padding:10px 28px}}
+@media(max-width:430px){header .t{display:none}}
+.land{position:relative;text-align:center;padding:34px 10px 10px}
+.land .glow{position:absolute;inset:-60px 0 auto 0;height:420px;background:radial-gradient(closest-side,#8b3dff55,transparent);z-index:-1}
+.land img{width:min(210px,52vw);border-radius:34px;box-shadow:0 0 60px #8b3dffaa,0 0 130px #2f7bff55;animation:fl 4s ease-in-out infinite}
+@keyframes fl{50%{transform:translateY(-10px)}}
+.land h1{font:800 clamp(38px,9vw,72px)/1.1 Changa;margin:20px 0 8px;letter-spacing:2px;background:linear-gradient(90deg,#4aa0ff,#a86bff,#ffb400);-webkit-background-clip:text;background-clip:text;color:transparent}
+.land p{color:var(--mut);max-width:540px;margin:0 auto 22px;line-height:1.9;font-size:16px}
+.cta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn.lg{padding:14px 30px;font-size:18px;border-radius:16px}
+.sec{margin:36px 0 14px;display:flex;align-items:center;gap:12px}
+.sec h2{margin:0;font-size:22px;white-space:nowrap}
+.sec:after{content:"";flex:1;height:2px;background:linear-gradient(90deg,var(--line),transparent)}
+.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.gc{position:relative;overflow:hidden;border-radius:22px;padding:18px 16px;min-height:200px;display:flex;flex-direction:column;justify-content:flex-end;gap:3px;text-decoration:none;color:#fff;border:1px solid #ffffff2a;cursor:pointer;text-align:right;font-family:inherit;transition:.2s;background:var(--g,linear-gradient(135deg,#1b2a7a,#5a22b8))}
+.gc:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 20% 15%,#ffffff33,transparent 55%)}
+.gc:hover{transform:translateY(-5px);box-shadow:0 14px 38px #8b3dff66}
+.gc>*{position:relative}
+.gc .ic{position:absolute;top:12px;left:14px;font-size:66px;line-height:1;filter:drop-shadow(0 8px 14px #0009)}
+.gc b{font:800 21px Changa}
+.gc span{font-size:13px;color:#ffffffd9;line-height:1.6}
+.gc .tg{position:absolute;top:14px;right:14px;font-size:11px;background:#0007;padding:2px 10px;border-radius:99px}
+.gc .go{font-style:normal;font-weight:700;color:#fff;margin-top:8px;font-size:13px;background:#00000055;align-self:flex-start;padding:4px 12px;border-radius:99px}
+.gc.lk{filter:saturate(.8)}
+.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.feat div{padding:18px;border-radius:18px;background:#ffffff08;border:1px solid var(--line)}
+.feat i{font-style:normal;font-size:32px;display:block;margin-bottom:6px}
+.feat p{color:var(--mut);font-size:13px;margin-top:4px;line-height:1.7}
+.modal{position:fixed;inset:0;z-index:60;background:#020410b3;backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px}
+.modal .card{width:100%;max-width:400px;position:relative;background:#0d1230;margin:0;box-shadow:0 0 60px #8b3dff44}
+.modal .x{position:absolute;top:10px;left:14px;background:none;border:0;color:var(--mut);font-size:22px;cursor:pointer}
+.welcome{display:flex;gap:16px;align-items:center;border-radius:26px;padding:24px 22px;margin-top:14px;background:linear-gradient(120deg,#1b2a7acc,#5a22b8cc);border:1px solid #ffffff2a;box-shadow:0 0 50px #8b3dff33}
+.welcome .av2{font-size:56px;width:84px;height:84px;display:flex;align-items:center;justify-content:center;background:#0006;border-radius:24px}
+.welcome>div:last-child{flex:1}
+.welcome h1{font-size:26px;margin-bottom:4px}
+.cols{display:grid;grid-template-columns:1fr;gap:0 24px}
+@media(min-width:760px){.cols{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
 <div id="app"><div class="load">⏳ جاري التحميل…</div></div>
-<div id="toast"></div>
+<div id="toast"></div><div id="modal"></div>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,updateProfile} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {getFirestore,doc,getDoc,setDoc,updateDoc,addDoc,deleteDoc,collection,query,where,orderBy,limit,onSnapshot,getDocs,increment,arrayUnion,arrayRemove,deleteField} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* ========= الإعدادات: عدّل القيم دي بس ========= */
-const firebaseConfig={apiKey:"AIzaSyAOYX7jwtYps5H8hHf22CmF0FaSyw9o8BM",authDomain:"g-z-arena.firebaseapp.com",projectId:"g-z-arena",storageBucket:"g-z-arena.firebasestorage.app",messagingSenderId:"223114732611",appId:"1:223114732611:web:b58d6e2d0b1717609460f6"};
-const ADMIN_EMAIL="opaidaboda@gmail.com";
+const firebaseConfig={apiKey:"AIzaSyAOYX7jwtYps5H8hHf22CmF0FaSyw9o8BM",authDomain:"g-z-arena.firebaseapp.com",projectId:"g-z-arena",storageBucket:"g-z-arena.firebasestorage.app",messagingSenderId:"223114732611",appId:"1:223114732611:web:b58d6e2d0b1717609460f6",measurementId:"G-5K8668S1YS"};
+const ADMIN_EMAIL="opaidamazed@gmail.com";
 /* =============================================== */
-const LOGO="__LOGO__";
+const LOGO="Logo.png";
 
 /* ---------- أدوات ---------- */
 const $=(s,r=document)=>r.querySelector(s);
@@ -177,14 +219,16 @@ const BADGES=[
 {id:'qp',n:'🧠 كويز مثالي',d:'جاوب كل أسئلة كويز صح',ok:p=>(p.scores?.quizPerfect||0)>=1},
 {id:'sn',n:'🐍 ثعبان محترف',d:'15 نقطة في الثعبان',ok:p=>(p.scores?.snake||0)>=15},
 {id:'spy',n:'🕵️ جاسوس ماهر',d:'اكسب كجاسوس في برا السالفة',ok:p=>p.spyWins>=1}];
+const GRAD={guess:'linear-gradient(135deg,#1e5bff,#7a2cff)',spy:'linear-gradient(135deg,#7a2cff,#c0267a)',memory:'linear-gradient(135deg,#0a9a9a,#2f7bff)',who:'linear-gradient(135deg,#ff7a00,#c0267a)'};
+const SOLO=[{href:'#/quiz',icon:'🧠',name:'جيمر كويز',desc:'أسئلة عن لعبتك المفضلة: Hollow Knight وPUBG وRoblox وBomb Squad',g:'linear-gradient(135deg,#16a36b,#2f7bff)'},{href:'#/play/snake',icon:'🐍',name:'ثعبان',desc:'كل تفاحة نقطة… لحد ما تخسر',g:'linear-gradient(135deg,#0b8f4d,#6fb800)'},{href:'#/play/reaction',icon:'⚡',name:'رد الفعل',desc:'مين أسرع إيد في الشلة؟',g:'linear-gradient(135deg,#ff4d6d,#ff7a00)'},{href:'#/play/typing',icon:'⌨️',name:'سرعة الكتابة',desc:'اكتب بالعربي بأسرع ما تقدر',g:'linear-gradient(135deg,#8b3dff,#2f7bff)'}];
 const ERR={'auth/invalid-credential':'الإيميل أو الباسورد غلط','auth/user-not-found':'الحساب مش موجود','auth/wrong-password':'الباسورد غلط','auth/email-already-in-use':'الإيميل ده مسجل قبل كده','auth/weak-password':'الباسورد ضعيف (6 حروف على الأقل)','auth/invalid-email':'الإيميل مش صحيح','auth/network-request-failed':'مشكلة في النت','auth/too-many-requests':'محاولات كتير، استنى شوية'};
 
 /* ---------- الدخول ---------- */
 const newProfile=n=>({name:n,avatar:pick(AV),xp:0,wins:0,played:0,spyWins:0,badges:[],scores:{},createdAt:Date.now()});
 onAuthStateChanged(auth,async u=>{
   cleanup();S.pu&&S.pu();S.pu=null;
-  if(!u){S.user=null;S.profile=null;showAuth();return}
-  S.user=u;S.admin=(u.email||'').toLowerCase()===ADMIN_EMAIL.toLowerCase();
+  if(!u){S.user=null;S.profile=null;S.admin=false;S.reg=null;buildShell();route();return}
+  S.user=u;S.admin=(u.email||'').toLowerCase()===ADMIN_EMAIL.toLowerCase();$('#modal').innerHTML='';
   const ref=doc(db,'users',u.uid);
   try{const sn=await getDoc(ref);if(!sn.exists())await setDoc(ref,newProfile(S.reg?.name||u.displayName||u.email.split('@')[0]))}
   catch(e){toast('تأكد من قواعد Firestore: '+(e.code||''),'bad')}
@@ -192,32 +236,42 @@ onAuthStateChanged(auth,async u=>{
   S.pu=onSnapshot(ref,s=>{if(!s.exists())return;S.profile=s.data();badgeCheck();if(first){first=false;buildShell();route()}else updateHeader()});
 });
 function showAuth(mode='login'){
-  $('#app').innerHTML=`<main style="max-width:420px"><div class="card center"><img src="${LOGO}" style="width:130px;border-radius:26px;box-shadow:0 0 40px #8b3dff88">
-  <h2>أهلاً بيك في GZ Arena</h2><p class="muted">${mode==='login'?'سجّل دخولك وكمّل التحدي':'اعمل حساب جديد وانضم للأرينا'}</p>
-  ${mode==='reg'?'<input id="nm" placeholder="اسمك في الأرينا" maxlength="16">':''}
-  <input id="em" type="email" placeholder="الإيميل" dir="ltr"><input id="pw" type="password" placeholder="الباسورد" dir="ltr" data-enter="${mode==='login'?'login':'register'}">
-  <button class="btn" style="width:100%;margin-top:8px" data-a="${mode==='login'?'login':'register'}">${mode==='login'?'دخول':'إنشاء حساب'}</button>
-  <p class="muted" style="margin-top:12px">${mode==='login'?'معندكش حساب؟':'عندك حساب؟'} <a href="#" data-a="authtab" data-v="${mode==='login'?'reg':'login'}" style="color:var(--gold)">${mode==='login'?'سجّل هنا':'ادخل هنا'}</a></p></div></main>`;
+  const reg=mode==='reg';
+  $('#modal').innerHTML=`<div class="modal" data-a="closeauth"><div class="card center"><button class="x" data-a="closeauth">✕</button><img src="${LOGO}" style="width:90px;border-radius:20px;box-shadow:0 0 30px #8b3dff88">
+  <h2>${reg?'إنشاء حساب جديد':'تسجيل الدخول'}</h2><p class="muted">${reg?'انضم للأرينا والعب مع صحابك':'أهلاً بعودتك يا بطل'}</p>
+  ${reg?'<input id="nm" placeholder="اسمك في الأرينا" maxlength="16">':''}
+  <input id="em" type="email" placeholder="الإيميل" dir="ltr"><input id="pw" type="password" placeholder="الباسورد" dir="ltr" data-enter="${reg?'register':'login'}">
+  <button class="btn" style="width:100%;margin-top:8px" data-a="${reg?'register':'login'}">${reg?'إنشاء حساب':'دخول'}</button>
+  <p class="muted" style="margin-top:12px">${reg?'عندك حساب؟':'معندكش حساب؟'} <a href="#" data-a="authtab" data-v="${reg?'login':'reg'}" style="color:var(--gold)">${reg?'ادخل هنا':'سجّل هنا'}</a></p></div></div>`;
+  setTimeout(()=>{const f=$(reg?'#nm':'#em');if(f)f.focus()},60);
 }
 ACT.authtab=el=>showAuth(el.dataset.v);
+ACT.authopen=el=>showAuth(el.dataset.v);
+ACT.needauth=()=>{toast('🔒 سجّل دخولك الأول عشان تلعب','bad');showAuth('reg')};
+ACT.closeauth=(t,e)=>{if(t.classList.contains('modal')&&e&&e.target!==t)return;$('#modal').innerHTML=''};
 ACT.login=async()=>{try{await signInWithEmailAndPassword(auth,$('#em').value.trim(),$('#pw').value)}catch(e){toast(ERR[e.code]||e.code,'bad')}};
 ACT.register=async()=>{const n=$('#nm').value.trim();if(n.length<2)return toast('اكتب اسمك','bad');S.reg={name:n};
   try{const c=await createUserWithEmailAndPassword(auth,$('#em').value.trim(),$('#pw').value);await updateProfile(c.user,{displayName:n})}catch(e){S.reg=null;toast(ERR[e.code]||e.code,'bad')}};
-ACT.logout=()=>signOut(auth);
+ACT.logout=()=>signOut(auth).then(()=>{location.hash='#/home'});
 
 /* ---------- الهيكل والراوتر ---------- */
+const NAVI={home:'🏠',games:'🎮',leaderboard:'🏅',events:'📅',profile:'👤',admin:'⚙️'},NAVN={home:'الرئيسية',games:'الألعاب',leaderboard:'المتصدرين',events:'الفعاليات',profile:'حسابي',admin:'الأدمن'};
 function buildShell(){
-  $('#app').innerHTML=`<header><img src="${LOGO}"><span class="t">GZ ARENA</span><span class="sp"></span><span id="hd"></span></header>
+  const ks=['home','games','leaderboard','events',...(S.user?['profile']:[]),...(S.admin?['admin']:[])];
+  $('#app').innerHTML=`<header><a href="#/home" style="display:flex;align-items:center;gap:10px;text-decoration:none"><img src="${LOGO}"><span class="t">GZ ARENA</span></a><nav class="links">${ks.map(k=>`<a href="#/${k}">${NAVN[k]}</a>`).join('')}</nav><span class="sp"></span><span id="hd"></span></header>
   <main id="view"></main>
-  <nav class="nav"><a href="#/home"><span>🏠</span>الرئيسية</a><a href="#/games"><span>🎮</span>ألعاب</a><a href="#/leaderboard"><span>🏅</span>المتصدرين</a><a href="#/events"><span>📅</span>فعاليات</a><a href="#/profile"><span>👤</span>حسابي</a>${S.admin?'<a href="#/admin"><span>⚙️</span>أدمن</a>':''}</nav>`;
+  <nav class="nav">${ks.map(k=>`<a href="#/${k}"><span>${NAVI[k]}</span>${NAVN[k]}</a>`).join('')}${S.user?'':'<a href="#" data-a="authopen" data-v="login"><span>🔑</span>دخول</a>'}</nav>`;
   updateHeader();
 }
-function updateHeader(){const p=S.profile,h=$('#hd');if(h)h.innerHTML=`<span class="chip">${p.avatar} ${esc(p.name)} • Lv ${lvl(p.xp)}</span>`}
+function updateHeader(){const h=$('#hd');if(!h)return;const p=S.profile;
+  h.innerHTML=S.user&&p?`<a href="#/profile" class="chip" style="text-decoration:none;color:inherit">${p.avatar} ${esc(p.name)} • Lv ${lvl(p.xp)}</a>`:`<button class="btn ghost sm" data-a="authopen" data-v="login">دخول</button> <button class="btn sm" data-a="authopen" data-v="reg">إنشاء حساب</button>`}
 function route(){
-  cleanup();if(!S.profile||!view())return;
+  cleanup();if(!view())return;
+  if(S.user&&!S.profile)return;
   const [,page,arg]=(location.hash||'#/home').split('/');
-  const nav=['room','play','quiz'].includes(page)?'games':page;
-  document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#/'+nav));
+  if(!S.user&&page&&page!=='home'){location.replace('#/home');showAuth('login');toast('🔒 سجّل دخولك الأول عشان تدخل','bad');return}
+  const nav=['room','play','quiz'].includes(page)?'games':(page||'home');
+  document.querySelectorAll('.nav a,.links a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#/'+nav));
   const V={home:viewHome,games:viewGames,room:viewRoom,leaderboard:viewLB,events:viewEvents,profile:viewProfile,admin:viewAdmin,play:viewPlay,quiz:viewQuiz};
   (V[page]||viewHome)(arg);window.scrollTo(0,0);
 }
@@ -235,16 +289,31 @@ function badgeCheck(){const p=S.profile;if(!p||bcBusy)return;const have=new Set(
 const xpBar=p=>{const l=lvl(p.xp),b=lvlBase(l),n=lvlBase(l+1),pc=Math.min(100,Math.round((p.xp-b)/(n-b)*100));return `<div class="muted">المستوى ${l} • ${p.xp} XP (باقي ${n-p.xp} للمستوى ${l+1})</div><div class="bar"><i style="width:${pc}%"></i></div>`};
 
 /* ---------- الرئيسية ---------- */
+function gameCards(guest,type){
+  const mp=Object.entries(G).map(([k,g])=>`<button class="gc ${guest?'lk':''}" style="--g:${GRAD[k]}" data-a="${guest?'needauth':'mk'}" data-v="${k}"><span class="tg">جماعي مباشر</span><span class="ic">${g.icon}</span><b>${g.name}</b><span>${g.desc}</span><em class="go">${guest?'🔒 سجّل عشان تلعب':'إنشاء غرفة ←'}</em></button>`).join('');
+  const so=SOLO.map(s=>guest?`<button class="gc lk" style="--g:${s.g}" data-a="needauth"><span class="tg">فردي</span><span class="ic">${s.icon}</span><b>${s.name}</b><span>${s.desc}</span><em class="go">🔒 سجّل عشان تلعب</em></button>`:`<a class="gc" href="${s.href}" style="--g:${s.g}"><span class="tg">فردي</span><span class="ic">${s.icon}</span><b>${s.name}</b><span>${s.desc}</span><em class="go">العب ←</em></a>`).join('');
+  return type==='mp'?mp:type==='solo'?so:mp+so;
+}
+function viewLanding(){
+  view().innerHTML=`<section class="land"><div class="glow"></div><img src="${LOGO}" alt="GZ Arena"><h1>GZ ARENA</h1>
+  <p>أرينا الأصحاب… ألعاب جماعية مباشرة، تحديات، بطولات ولوحة متصدرين. سجّل وادخل الغرفة مع شلتك.</p>
+  <div class="cta"><button class="btn lg gold" data-a="authopen" data-v="reg">🎮 ابدأ اللعب — حساب جديد</button><button class="btn lg ghost" data-a="authopen" data-v="login">عندي حساب</button></div></section>
+  <div class="sec"><h2>🎮 الألعاب</h2></div><div class="gg">${gameCards(true)}</div>
+  <div class="sec"><h2>✨ ليه GZ Arena؟</h2></div>
+  <div class="feat"><div><i>⚡</i><b>لعب مباشر</b><p>غرف بكود وبتلعبوا مع بعض في نفس اللحظة</p></div><div><i>🏅</i><b>لوحة المتصدرين</b><p>نافس صحابك على الصدارة في كل لعبة</p></div><div><i>🏆</i><b>بطولات وفعاليات</b><p>تحديات وبطولات بتتعلن بشكل دوري</p></div><div><i>🎖️</i><b>مستويات وشارات</b><p>كل لعبة بتزود XP وبتفتح إنجازات</p></div></div>
+  <div class="card center" style="margin-top:30px"><h3>جاهز تدخل الأرينا؟</h3><p class="muted" style="margin:6px 0 12px">الألعاب مفتوحة للأعضاء بس — التسجيل ثواني</p><button class="btn gold" data-a="authopen" data-v="reg">إنشاء حساب</button></div>`;
+}
 function viewHome(){
+  if(!S.user)return viewLanding();
   const p=S.profile;
-  view().innerHTML=`<section class="card hero"><img src="${LOGO}" class="logo-big"><div><h1>أهلاً يا ${esc(p.name)} 👋</h1>${xpBar(p)}</div></section>
-  <div class="grid2"><a class="card tile" href="#/games"><b>🎮 العب دلوقتي</b><span>غرف مباشرة مع صحابك</span></a><a class="card tile" href="#/quiz"><b>🧠 جيمر كويز</b><span>اختبر معلوماتك في لعبتك</span></a></div>
-  <h2>🔴 غرف مفتوحة</h2><div id="rooms" class="list"></div>
-  <h2>🏅 أعلى 5 لاعبين</h2><div id="top" class="list"></div>
-  <h2>📅 الفعاليات القادمة</h2><div id="ev" class="list"></div>`;
+  view().innerHTML=`<section class="welcome"><div class="av2">${p.avatar}</div><div><h1>أهلاً يا ${esc(p.name)} 👋</h1>${xpBar(p)}</div></section>
+  <div class="sec"><h2>🎮 العب دلوقتي</h2></div><div class="gg">${gameCards(false)}</div>
+  <div class="sec"><h2>🔴 غرف مفتوحة</h2></div><div id="rooms" class="list"></div>
+  <div class="cols"><div><div class="sec"><h2>🏅 أعلى لاعبين</h2></div><div id="top" class="list"></div></div>
+  <div><div class="sec"><h2>📅 فعاليات قادمة</h2></div><div id="ev" class="list"></div></div></div>`;
   roomsLive($('#rooms'));
-  getDocs(query(collection(db,'users'),orderBy('xp','desc'),limit(5))).then(s=>{$('#top').innerHTML=s.docs.map((d,i)=>{const u=d.data();return `<div class="rk ${d.id===S.user.uid?'me':''}"><span>${['🥇','🥈','🥉'][i]||i+1}</span><span>${u.avatar} ${esc(u.name)}</span><b>${u.xp} XP</b></div>`}).join('')||'<p class="muted">لسه مفيش لاعبين</p>'}).catch(()=>{});
-  getDocs(query(collection(db,'events'),orderBy('date','desc'),limit(10))).then(s=>{const a=s.docs.map(d=>d.data()).filter(e=>e.date>=Date.now()).slice(-2);$('#ev').innerHTML=a.map(e=>`<a class="item" href="#/events" style="text-decoration:none"><span style="font-size:24px">${EVI[e.type]||'📅'}</span><div class="g"><b>${esc(e.title)}</b><div class="muted">${fmtD(e.date)}</div></div></a>`).join('')||'<p class="muted">مفيش فعاليات قريبة</p>'}).catch(()=>{});
+  getDocs(query(collection(db,'users'),orderBy('xp','desc'),limit(5))).then(s=>{const t=$('#top');if(t)t.innerHTML=s.docs.map((d,i)=>{const u=d.data();return `<div class="rk ${d.id===S.user.uid?'me':''}"><span>${['🥇','🥈','🥉'][i]||i+1}</span><span>${u.avatar} ${esc(u.name)}</span><b>${u.xp} XP</b></div>`}).join('')||'<p class="muted">لسه مفيش لاعبين</p>'}).catch(()=>{});
+  getDocs(query(collection(db,'events'),orderBy('date','desc'),limit(10))).then(s=>{const a=s.docs.map(d=>d.data()).filter(e=>e.date>=Date.now()).slice(-2);const t=$('#ev');if(t)t.innerHTML=a.map(e=>`<a class="item" href="#/events" style="text-decoration:none"><span style="font-size:24px">${EVI[e.type]||'📅'}</span><div class="g"><b>${esc(e.title)}</b><div class="muted">${fmtD(e.date)}</div></div></a>`).join('')||'<p class="muted">مفيش فعاليات قريبة</p>'}).catch(()=>{});
 }
 
 /* ---------- الغرف ---------- */
@@ -258,15 +327,10 @@ ACT.mk=async el=>{const k=el.dataset.v,u=S.user.uid;const r=await addDoc(collect
 ACT.join=el=>{location.hash='#/room/'+el.dataset.v};
 ACT.joinCode=async()=>{const c=$('#jc').value.trim();if(!c)return;const s=await getDocs(query(collection(db,'rooms'),where('code','==',c),limit(5)));const d=s.docs.find(x=>x.data().status==='lobby'||x.data().playerIds.includes(S.user.uid));if(!d)return toast('الكود ده مش صح أو الغرفة بدأت','bad');location.hash='#/room/'+d.id};
 function viewGames(){
-  const mp=Object.entries(G).map(([k,g])=>`<div class="card game"><div class="gi">${g.icon}</div><h3>${g.name}</h3><p>${g.desc}</p><button class="btn" data-a="mk" data-v="${k}">إنشاء غرفة</button></div>`).join('');
-  view().innerHTML=`<h2>🌐 ألعاب جماعية مباشرة</h2><div class="grid2">${mp}</div>
-  <div class="card"><b>ادخل بكود غرفة</b><div class="row"><input id="jc" inputmode="numeric" placeholder="كود من 4 أرقام" data-enter="joinCode"><button class="btn" data-a="joinCode">دخول</button></div></div>
-  <h2>🔴 الغرف المفتوحة</h2><div id="rooms" class="list"></div>
-  <h2>🧠 تحديات فردية</h2><div class="grid2">
-  <a class="card tile" href="#/quiz"><b>🧠 جيمر كويز</b><span>أسئلة عن لعبتك المفضلة</span></a>
-  <a class="card tile" href="#/play/snake"><b>🐍 ثعبان</b><span>كل تفاحة = نقطة</span></a>
-  <a class="card tile" href="#/play/reaction"><b>⚡ رد الفعل</b><span>مين أسرع إيد؟</span></a>
-  <a class="card tile" href="#/play/typing"><b>⌨️ سرعة الكتابة</b><span>اكتب بالعربي بسرعة</span></a></div>`;
+  view().innerHTML=`<div class="sec"><h2>🌐 ألعاب جماعية مباشرة</h2></div><div class="gg">${gameCards(false,'mp')}</div>
+  <div class="card" style="margin-top:18px"><b>ادخل بكود غرفة</b><div class="row"><input id="jc" inputmode="numeric" placeholder="كود من 4 أرقام" data-enter="joinCode"><button class="btn" data-a="joinCode">دخول</button></div></div>
+  <div class="sec"><h2>🔴 الغرف المفتوحة</h2></div><div id="rooms" class="list"></div>
+  <div class="sec"><h2>🧠 تحديات فردية</h2></div><div class="gg">${gameCards(false,'solo')}</div>`;
   roomsLive($('#rooms'));
 }
 
@@ -483,7 +547,7 @@ ACT.again=()=>viewPlay('typing');
 
 /* ---------- المتصدرين ---------- */
 const LBT={xp:{n:'⭐ النقاط',f:'xp',d:'desc',u:' XP'},wins:{n:'🏆 انتصارات',f:'wins',d:'desc',u:' فوز'},quiz:{n:'🧠 كويز',f:'scores.quiz',d:'desc',u:' نقطة'},snake:{n:'🐍 ثعبان',f:'scores.snake',d:'desc',u:' نقطة'},reaction:{n:'⚡ رد الفعل',f:'scores.reaction',d:'asc',u:'ms'},typing:{n:'⌨️ كتابة',f:'scores.typing',d:'desc',u:' ك/د'}};
-function viewLB(){view().innerHTML=`<h2>🏅 المتصدرين</h2><div class="tabs">${Object.entries(LBT).map(([k,v])=>`<button class="btn ghost sm" data-a="lbtab" data-v="${k}">${v.n}</button>`).join('')}</div><div id="lb" class="card"></div>`;ACT.lbtab({dataset:{v:'xp'}})}
+function viewLB(){view().innerHTML=`<div class="sec"><h2>🏅 المتصدرين</h2></div><div class="tabs">${Object.entries(LBT).map(([k,v])=>`<button class="btn ghost sm" data-a="lbtab" data-v="${k}">${v.n}</button>`).join('')}</div><div id="lb" class="card"></div>`;ACT.lbtab({dataset:{v:'xp'}})}
 ACT.lbtab=async el=>{const k=el.dataset.v,t=LBT[k];document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===k));const box=$('#lb');if(!box)return;box.innerHTML='<div class="load">⏳</div>';
   const s=await getDocs(query(collection(db,'users'),orderBy(t.f,t.d),limit(20)));
   box.innerHTML=s.docs.map((d,i)=>{const u=d.data();return `<div class="rk ${d.id===S.user.uid?'me':''}"><span>${['🥇','🥈','🥉'][i]||i+1}</span><span>${u.avatar} ${esc(u.name)} <span class="chip">Lv ${lvl(u.xp)}</span></span><b class="gold">${getp(u,t.f)}${t.u}</b></div>`}).join('')||'<p class="muted center">لسه مفيش نتائج هنا — كن الأول!</p>'};
@@ -492,7 +556,7 @@ ACT.lbtab=async el=>{const k=el.dataset.v,t=LBT[k];document.querySelectorAll('.t
 const EVI={tournament:'🏆',challenge:'⚡',event:'🎉'},EVN={tournament:'بطولة',challenge:'تحدي',event:'فعالية'};
 let EVC={};
 function viewEvents(){
-  view().innerHTML=`<h2>📅 البطولات والفعاليات</h2><div id="evs"></div>`;
+  view().innerHTML=`<div class="sec"><h2>📅 البطولات والفعاليات</h2></div><div id="evs"></div>`;
   listen(onSnapshot(query(collection(db,'events'),orderBy('date','desc')),s=>{
     EVC={};const now=Date.now();
     $('#evs').innerHTML=s.docs.map(d=>{const e=d.data();EVC[d.id]=e;const ps=Object.values(e.p||{}),joined=!!(e.p||{})[me()],past=e.date<now;

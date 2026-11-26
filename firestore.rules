@@ -1,0 +1,38 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signed() { return request.auth != null; }
+    // غيّر الإيميل ده لإيميل الأدمن (حروف صغيرة) — لازم يكون نفس ADMIN_EMAIL في index.html
+    function isAdmin() {
+      return signed() && request.auth.token.email.lower() == 'opaidamazed@gmail.com';
+    }
+
+    match /users/{uid} {
+      allow read: if signed();
+      allow create: if signed() && request.auth.uid == uid;
+      allow update: if signed() && (request.auth.uid == uid || isAdmin());
+    }
+
+    match /rooms/{id} {
+      allow read, write: if signed();
+    }
+
+    match /events/{id} {
+      allow read: if signed();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() ||
+        (signed() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['p']));
+    }
+
+    match /puzzles/{id} {
+      allow read: if signed();
+      allow write: if isAdmin();
+    }
+
+    match /quizQuestions/{id} {
+      allow read: if signed();
+      allow write: if isAdmin();
+    }
+  }
+}
