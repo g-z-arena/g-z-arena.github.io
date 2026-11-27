@@ -22,7 +22,43 @@ service cloud.firestore {
         && sa.get('quiz', 0) <= 400
         && sa.get('snake', 0) <= 400
         && sa.get('typing', 0) <= 200
-        && sa.get('reaction', 9999) >= 100;
+        && sa.get('reaction', 9999) >= 100
+        && gamesOk() && monthOk()
+        && a.get('recent', []).size() <= 10;
+    }
+
+    // ===== إحصائيات البروفايل: games (لكل لعبة) / monthly (شهري) / recent (آخر مباريات) =====
+    function gm(d, k) { return d.get('games', {}).get(k, {}); }
+
+    // لعبة واحدة: عدّاد اللعب والفوز يزيد بحد أقصى 1 في كل تحديث، والفوز مايعدّيش اللعب
+    function gOk(k) {
+      let n = gm(request.resource.data, k);
+      let o = gm(resource.data, k);
+      return n.get('p', 0) - o.get('p', 0) >= 0 && n.get('p', 0) - o.get('p', 0) <= 1
+        && n.get('w', 0) - o.get('w', 0) >= 0 && n.get('w', 0) - o.get('w', 0) <= 1
+        && n.get('w', 0) <= n.get('p', 0);
+    }
+
+    function gamesOk() {
+      let a = request.resource.data.get('games', {});
+      let b = resource.data.get('games', {});
+      return a.diff(b).affectedKeys().hasOnly(['guess', 'spy', 'memory', 'who', 'quiz', 'snake', 'reaction', 'typing'])
+        && gOk('guess') && gOk('spy') && gOk('memory') && gOk('who')
+        && gOk('quiz') && gOk('snake') && gOk('reaction') && gOk('typing');
+    }
+
+    // الشهر الحالي بس (UTC) هو اللي يتعدّل — مفتاحه m202611 مثلًا
+    function monthOk() {
+      let t = request.time;
+      let mk = 'm' + string(t.year()) + (t.month() < 10 ? '0' : '') + string(t.month());
+      let a = request.resource.data.get('monthly', {});
+      let b = resource.data.get('monthly', {});
+      let na = a.get(mk, {});
+      let nb = b.get(mk, {});
+      return a.diff(b).affectedKeys().hasOnly([mk])
+        && na.get('xp', 0) - nb.get('xp', 0) >= 0 && na.get('xp', 0) - nb.get('xp', 0) <= 1500
+        && na.get('p', 0) - nb.get('p', 0) >= 0 && na.get('p', 0) - nb.get('p', 0) <= 1
+        && na.get('w', 0) - nb.get('w', 0) >= 0 && na.get('w', 0) - nb.get('w', 0) <= 1;
     }
 
     match /users/{uid} {
