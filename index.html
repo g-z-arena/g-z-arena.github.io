@@ -207,6 +207,13 @@ header .links{display:none;gap:4px;margin-inline-start:14px}
 .mfr{transform:rotateY(180deg);background:linear-gradient(135deg,#0d1338,#1a2260);color:var(--c);box-shadow:inset 0 0 20px #0006}
 .mcard.done .mfr{background:#2ee59d22;border-color:var(--ok)}
 .mf .ms{font-size:clamp(22px,6.5vw,40px)}
+.gc.ql{min-height:236px}
+.gc .ic.gl{display:grid;place-items:center;width:88px;height:88px;padding:10px;border-radius:24px;border:2px solid transparent;background:linear-gradient(160deg,#18235a,#090d26) padding-box,linear-gradient(135deg,#2f7bff,#8b3dff 55%,#ffb400) border-box;box-shadow:0 10px 22px #0006}
+.gc .ic.gl img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 4px 6px #0008)}
+.gl-t{width:48px;height:48px;display:grid;place-items:center;border-radius:14px;background:#0a0f2a;border:1px solid var(--line);font-size:26px;flex:none;padding:4px}
+.gl-t img{width:100%;height:100%;object-fit:contain}
+.nocopy{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.nocopy input,.nocopy textarea{-webkit-user-select:text;user-select:text}
 </style>
 </head>
 <body>
@@ -295,6 +302,21 @@ const BUILTIN_PUZZLES=[
 {emoji:'🚇🏄',answer:'صب واي سيرفرز',aliases:['subway surfers','subway'],level:4},
 {emoji:'🐈🌃',answer:'ستراي',aliases:['stray'],level:5}];
 const QG={hollow:{name:'Hollow Knight',icon:'🪲'},bomb:{name:'Bomb Squad',icon:'💣'},pubg:{name:'PUBG',icon:'🔫'},roblox:{name:'Roblox',icon:'🧱'}};
+/* شعارات ألعاب الكويز: بتتخزن في Firestore (collection: quizGames) وبتتدار من لوحة الأدمن */
+const QG0=JSON.parse(JSON.stringify(QG));
+async function loadGames(){try{const sn=await getDocs(collection(db,'quizGames'));
+  Object.keys(QG).forEach(k=>{if(QG0[k])QG[k]={...QG0[k]};else delete QG[k]});
+  sn.docs.forEach(d=>{const x=d.data();QG[d.id]={...(QG0[d.id]||{icon:'🎮'}),name:x.name||QG0[d.id]?.name||d.id,logo:String(x.logo||'').startsWith('data:image/')?x.logo:''}})}catch(e){console.error(e)}}
+const gIco=(g,z=22)=>g.logo?`<img src="${esc(g.logo)}" alt="" style="width:${z}px;height:${z}px;object-fit:contain;border-radius:6px;vertical-align:-.3em">`:g.icon;
+function imgToLogo(file){return new Promise((res,rej)=>{
+  if(!file||!file.type.startsWith('image/'))return rej(new Error('اختار ملف صورة'));
+  const fr=new FileReader();fr.onerror=()=>rej(new Error('تعذر قراءة الصورة'));
+  fr.onload=()=>{const im=new Image();im.onerror=()=>rej(new Error('الصورة مش مدعومة'));
+    im.onload=()=>{const iw=im.naturalWidth||256,ih=im.naturalHeight||256,M=256,k=Math.min(1,M/Math.max(iw,ih)),w=Math.max(1,Math.round(iw*k)),h=Math.max(1,Math.round(ih*k)),c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(im,0,0,w,h);
+      let u=c.toDataURL('image/webp',.9);if(!u.startsWith('data:image/webp'))u=c.toDataURL('image/png');
+      if(u.length>400000)return rej(new Error('الصورة كبيرة قوي'));res(u)};
+    im.src=fr.result};
+  fr.readAsDataURL(file)})}
 const BUILTIN_Q=[
 {game:'hollow',q:'إيه اسم المملكة اللي بتدور فيها أحداث Hollow Knight؟',o:['هالونست (Hallownest)','دورتماوث','جرايف باث','كينغدوم هارت'],c:0},
 {game:'hollow',q:'إيه العملة اللي بتجمعها في اللعبة؟',o:['جيو (Geo)','روبوكس','كوينز','جيمز'],c:0},
@@ -385,7 +407,7 @@ function route(){
   (V[page]||viewHome)(arg);window.scrollTo(0,0);
 }
 window.addEventListener('hashchange',route);
-document.addEventListener('click',e=>{const t=e.target.closest('[data-a]');if(!t)return;const f=ACT[t.dataset.a];if(f){if(t.tagName==='A')e.preventDefault();Promise.resolve(f(t,e)).catch(er=>{console.error(er);toast('حصل خطأ: '+(er.code||er.message),'bad')})}});
+document.addEventListener('click',e=>{const t=e.target.closest('[data-a]');if(!t||!e.isTrusted)return;const f=ACT[t.dataset.a];if(f){if(t.tagName==='A')e.preventDefault();Promise.resolve(f(t,e)).catch(er=>{console.error(er);toast('حصل خطأ: '+(er.code||er.message),'bad')})}});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.dataset?.enter){e.preventDefault();ACT[e.target.dataset.enter]?.(e.target)}});
 
 /* ---------- XP والشارات ---------- */
@@ -570,7 +592,7 @@ G.guess={name:'خمّن اللعبة',icon:'🧩',desc:'بازل ناقص أجز
   render(r){const st=r.state;if(st.phase==='end')return rankHTML(r,'🏁 خلصت اللعبة!');
     const a=gInfo(r),rev=st.phase==='reveal',mine=st.solved[me()],stk=st.streak?.[me()]||0;
     const sv=Object.entries(st.solved).sort((x,y)=>x[1].t-y[1].t).map(([u,x],i)=>`<span class="chip ok">${i===0?'⚡ ':''}${esc(r.players[u]?.name)} +${x.p}</span>`).join('');
-    return `<div class="card center"><div class="row"><span class="chip">الجولة ${st.round+1}/${st.total}</span><span class="chip">مستوى ${a.p.level||1}</span><span class="chip c-purple">${a.mode==='pixel'?'بكسلة':'بازل'}</span>${stk?`<span class="chip c-orange">🔥 ${stk}</span>`:''}<span id="gt" class="chip"></span></div>
+    return `<div class="card center nocopy"><div class="row"><span class="chip">الجولة ${st.round+1}/${st.total}</span><span class="chip">مستوى ${a.p.level||1}</span><span class="chip c-purple">${a.mode==='pixel'?'بكسلة':'بازل'}</span>${stk?`<span class="chip c-orange">🔥 ${stk}</span>`:''}<span id="gt" class="chip"></span></div>
     <canvas id="gc" width="320" height="320"></canvas><div class="bar" style="margin:4px auto 8px;max-width:360px"><i id="gtb" style="width:100%"></i></div>
     ${rev?`<h2 class="ok">${esc(a.p.answer)}</h2>`:`<div class="hintp" id="gh"></div>${mine?`<h3 class="ok">جبتها! +${mine.p} ✅</h3>`:`<div class="row"><input id="gi" placeholder="اكتب اسم اللعبة" autocomplete="off" data-enter="gguess"><button class="btn" data-a="gguess">خمّن</button></div>`}`}
     <div style="margin-top:8px">${sv}</div></div>`},
@@ -586,6 +608,7 @@ G.guess={name:'خمّن اللعبة',icon:'🧩',desc:'بازل ناقص أجز
     if(st.phase==='play'){if(now>=st.rStart&&(r.playerIds.every(u=>st.solved[u])||now-st.rStart>ROUND+800))lock('gr'+st.round+st.v,()=>{const o={'state.phase':'reveal','state.rEnd':now};r.playerIds.forEach(u=>{if(!st.solved[u])o[`state.streak.${u}`]=0});return upd(o)})}
     else if(st.phase==='reveal'&&now-st.rEnd>4200)lock('gn'+st.round+st.v,()=>st.round+1>=st.total?upd({'state.phase':'end'}):upd({'state.phase':'play','state.round':st.round+1,'state.rStart':Date.now()+INTRO,'state.solved':{}}))}};
 ACT.gguess=async()=>{const inp=$('#gi');if(!inp)return;const v=norm(inp.value);if(!v)return;const st=CR.state;if(st.phase!=='play'||st.solved[me()]||Date.now()<st.rStart)return;
+  if(FL.t>st.rStart-INTRO){inp.value='';sfx('bad');return toast('⚠️ خرجت من الصفحة أثناء الجولة دي — مينفعش تجاوب فيها','bad')}
   const a=gInfo(CR),ok=[a.p.answer,...(a.p.aliases||[])].some(x=>norm(x)===v);
   if(!ok){inp.value='';inp.classList.add('shake');setTimeout(()=>inp.classList.remove('shake'),400);sfx('bad');toast('غلط… جرّب تاني','bad');return}
   const stk=st.streak?.[me()]||0,base=a.mode==='pixel'?Math.round(20+80*(1-a.prog)):Math.round(20+80*a.hf/a.m),pts=base+Math.min(stk,5)*10;
@@ -709,12 +732,24 @@ ACT.whint=()=>{const h=prompt('اكتب التلميح (من غير ما تقو�
 ACT.wnew=()=>{const st=CR.state,ids=CR.playerIds,n=ids[(ids.indexOf(st.thinker)+1)%ids.length];return upd({state:{phase:'pick',thinker:n,secret:'',qa:{},wrong:{},hint:'',qmax:st.qmax,mins:st.mins,v:Date.now()}})};
 
 /* ---------- جيمر كويز (فردي) ---------- */
+const QGP=['linear-gradient(135deg,#8b3dff,#2f7bff)','linear-gradient(135deg,#0a9a9a,#2f7bff)','linear-gradient(135deg,#ff7a00,#c0267a)','linear-gradient(135deg,#16a36b,#6fb800)','linear-gradient(135deg,#c0267a,#7a2cff)'];
 const QGR={hollow:'linear-gradient(135deg,#3a4a8a,#0f1b4d)',bomb:'linear-gradient(135deg,#ff4d6d,#ff7a00)',pubg:'linear-gradient(135deg,#ffb400,#b85c00)',roblox:'linear-gradient(135deg,#2f7bff,#00b2ff)'};
-function viewQuiz(){
+async function viewQuiz(){
+  view().innerHTML='<div class="load">⏳ جاري التحميل…</div>';await loadGames();if(!view()||!location.hash.startsWith('#/quiz'))return;
+  const qg=k=>QGR[k]||QGP[[...k].reduce((a,c)=>a+c.charCodeAt(0),0)%QGP.length];
   view().innerHTML=`<div class="sec"><h2>🧠 جيمر كويز</h2></div><p class="muted">اختار لعبتك — 10 أسئلة، 20 ثانية للسؤال. معاك 3 مساعدات: 50/50 وتخطي و+10 ثواني. كل ما تجاوب صح ورا بعض نقاطك بتتضاعف!</p>
-  <div class="gg" style="margin-top:12px">${Object.entries(QG).map(([k,g])=>`<button class="gc" style="--g:${QGR[k]}" data-a="qstart" data-v="${k}"><span class="ic">${g.icon}</span><b>${g.name}</b><span>أفضل نتيجة: ${S.profile.scores?.['quiz_'+k]||0}</span><em class="go">ابدأ التحدي ←</em></button>`).join('')}</div>`;
+  <div class="gg" style="margin-top:12px">${Object.entries(QG).map(([k,g])=>`<button class="gc ql" style="--g:${qg(k)}" data-a="qstart" data-v="${k}">${g.logo?`<span class="ic gl"><img src="${esc(g.logo)}" alt="${esc(g.name)}"></span>`:`<span class="ic">${g.icon}</span>`}<b>${esc(g.name)}</b><span>أفضل نتيجة: ${S.profile.scores?.['quiz_'+k]||0}</span><em class="go">ابدأ التحدي ←</em></button>`).join('')}</div>`;
 }
 let Q=null;
+/* ---------- منع الغش ---------- */
+const FL={t:0};
+function lostFocus(){FL.t=Date.now();
+  if(Q&&!Q.locked&&!Q.cheat){Q.cheat=1;toast('⚠️ خرجت من الصفحة — السؤال ده مش هيتحسب','bad')}
+  else if(typeof CR!=='undefined'&&CR&&CR.status==='playing'&&CR.game==='guess')toast('⚠️ خروجك من الصفحة بيلغي الجولة دي','bad')}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)lostFocus()});
+window.addEventListener('blur',lostFocus);
+const inNC=t=>{t=t&&t.nodeType===3?t.parentNode:t;return !!(t&&t.closest&&t.closest('.nocopy'))};
+['contextmenu','copy','cut','dragstart','selectstart'].forEach(ev=>document.addEventListener(ev,e=>{if(inNC(e.target)&&!(e.target.matches&&e.target.matches('input,textarea')&&ev==='selectstart'))e.preventDefault()}));
 const mult=s=>s>=5?2:s>=3?1.5:1;
 ACT.qstart=async el=>{const k=el.dataset.v;let list=[];try{list=(await getDocs(query(collection(db,'quizQuestions'),where('game','==',k)))).docs.map(d=>d.data())}catch{}
   if(!list.length)list=BUILTIN_Q.filter(x=>x.game===k);
@@ -723,8 +758,8 @@ ACT.qstart=async el=>{const k=el.dataset.v;let list=[];try{list=(await getDocs(q
   Q={k,qs,i:0,score:0,right:0,streak:0,best:0,t:20,tmax:20,locked:false,life:{f:1,s:1,t:1},log:[]};showQ();
   const iv=setInterval(()=>{if(!Q||Q.locked)return;Q.t--;qTick();if(Q.t<=5&&Q.t>0)sfx('tick');if(Q.t<=0)answer(-1)},1000);listen(()=>{clearInterval(iv);Q=null})};
 function qTick(){const t=$('#qt');if(t)t.textContent='⏱ '+Q.t;const b=$('#qb');if(b){b.style.width=Math.max(0,Q.t/Q.tmax*100)+'%';b.style.background=Q.t<=5?'var(--bad)':'linear-gradient(90deg,var(--gold),var(--ok))'}}
-function showQ(){const q=Q.qs[Q.i];Q.t=20;Q.tmax=20;Q.locked=false;
-  view().innerHTML=`<div class="card"><div class="row" style="justify-content:space-between"><span class="chip">${QG[Q.k].icon} ${QG[Q.k].name}</span><span class="chip">السؤال ${Q.i+1}/${Q.qs.length}</span><span class="chip gold" id="qt">⏱ 20</span></div>
+function showQ(){const q=Q.qs[Q.i];Q.t=20;Q.tmax=20;Q.locked=false;Q.t0=Date.now();Q.cheat=0;
+  view().innerHTML=`<div class="card nocopy"><div class="row" style="justify-content:space-between"><span class="chip">${gIco(QG[Q.k])} ${esc(QG[Q.k].name)}</span><span class="chip">السؤال ${Q.i+1}/${Q.qs.length}</span><span class="chip gold" id="qt">⏱ 20</span></div>
   <div class="row" style="justify-content:space-between;margin-top:6px"><span class="chip ok">⭐ ${Q.score}</span><span class="chip c-orange">🔥 سلسلة ${Q.streak}${mult(Q.streak)>1?' • x'+mult(Q.streak):''}</span></div>
   <div class="bar" style="margin-top:8px"><i style="width:${Q.i/Q.qs.length*100}%"></i></div><div class="bar" style="height:8px;margin-top:6px"><i id="qb" style="width:100%;background:linear-gradient(90deg,var(--gold),var(--ok))"></i></div>
   <h3 style="margin:16px 0;line-height:1.7">${esc(q.q)}</h3>${q.o.map((o,i)=>`<button class="opt" id="qo${i}" data-a="qans" data-v="${i}"><b class="lt">${'أبجد'[i]}</b>${esc(o)}</button>`).join('')}
@@ -735,10 +770,10 @@ ACT.qlife=el=>{if(!Q||Q.locked)return;const k=el.dataset.v;if(!Q.life[k])return;
   if(k==='f'){shuffle(q.o.map((_,i)=>i).filter(i=>i!==q.c)).slice(0,2).forEach(i=>{const b=$('#qo'+i);if(b){b.disabled=true;b.style.opacity=.25}})}
   else if(k==='t'){Q.t+=10;Q.tmax=30;qTick()}
   else{Q.locked=true;Q.log.push({q:q.q,sk:1,c:q.o[q.c]});setTimeout(()=>{if(!Q)return;Q.i++;if(Q.i>=Q.qs.length)endQuiz();else showQ()},300)}};
-function answer(i){if(!Q||Q.locked)return;Q.locked=true;const q=Q.qs[Q.i],ok=i===q.c;
+function answer(i){if(!Q||Q.locked)return;if(i>=0&&Date.now()-Q.t0<700)return toast('اقرا السؤال الأول 😉','bad');Q.locked=true;const q=Q.qs[Q.i],ok=i===q.c&&!Q.cheat;
   document.querySelectorAll('.opt').forEach((b,j)=>{if(j===q.c)b.classList.add('good');else if(j===i)b.classList.add('wrong')});
   if(ok){Q.right++;Q.streak++;Q.best=Math.max(Q.best,Q.streak);const pts=Math.round((10+Math.ceil(Q.t/2))*mult(Q.streak));Q.score+=pts;sfx('ok');toast('صح! +'+pts,'ok')}
-  else{Q.streak=0;sfx('bad');toast(i<0?'الوقت خلص':'غلط','bad')}
+  else{Q.streak=0;sfx('bad');toast(Q.cheat?'⚠️ السؤال اتلغى لأنك خرجت من الصفحة':i<0?'الوقت خلص':'غلط','bad')}
   Q.log.push({q:q.q,ok,c:q.o[q.c],a:i>=0?q.o[i]:null});
   setTimeout(()=>{if(!Q)return;Q.i++;if(Q.i>=Q.qs.length)endQuiz();else showQ()},1100)}
 async function endQuiz(){const {k,score,right,qs,log}=Q,tot=qs.length;Q.locked=true;
@@ -797,7 +832,7 @@ function playSnake(el){
   }
   function loop(now){raf=requestAnimationFrame(loop);if(alive&&now-last>=stepMs){last=now;step()}draw(now)}
   el.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{if(!alive)begin();setDir(b.dataset.d)});
-  const kh=e=>{const m={ArrowUp:'U',ArrowDown:'D',ArrowLeft:'L',ArrowRight:'R',w:'U',s:'D',a:'L',d:'R',W:'U',S:'D',A:'L',D:'R'}[e.key];if(m){e.preventDefault();if(!alive)begin();setDir(m)}};
+  const kh=e=>{if(!e.isTrusted)return;const m={ArrowUp:'U',ArrowDown:'D',ArrowLeft:'L',ArrowRight:'R',w:'U',s:'D',a:'L',d:'R',W:'U',S:'D',A:'L',D:'R'}[e.key];if(m){e.preventDefault();if(!alive)begin();setDir(m)}};
   document.addEventListener('keydown',kh);cv.onclick=()=>{if(!alive)begin()};
   let sx,sy;cv.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
   cv.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(Math.max(Math.abs(dx),Math.abs(dy))<20)return;if(!alive)begin();setDir(Math.abs(dx)>Math.abs(dy)?(dx>0?'R':'L'):(dy>0?'D':'U'))});
@@ -812,21 +847,31 @@ function playReaction(el){
   set('','⚡','اضغط للبدء');
   function start(){state='wait';set('wait','⏳','استنى… لسه');to=setTimeout(()=>{state='go';set('go','⚡','دوس!!');t0=Date.now()},1500+Math.random()*2500)}
   async function end(){state='done';const avg=Math.round(times.reduce((a,b)=>a+b)/times.length);set('','🏆',`متوسطك ${avg}ms — اضغط للإعادة`);await finalize('re'+Date.now(),{xp:Math.max(5,Math.round((600-avg)/10)),win:false});await best('reaction',avg,false)}
-  rb.onclick=()=>{
+  rb.onclick=e=>{if(e&&e.isTrusted===false)return;
     if(state==='idle'||state==='done'){if(state==='done'){n=0;times=[];$('#rr').innerHTML=''}start()}
     else if(state==='wait'){clearTimeout(to);state='idle';set('bad','❌','بدري! اضغط تاني')}
-    else if(state==='go'){const t=Date.now()-t0;times.push(t);n++;$('#rr').innerHTML=times.map(x=>`<span class="chip">${x}ms</span>`).join('');if(n>=5)end();else{state='idle';set('','⏱',`${t}ms — اضغط للمحاولة ${n+1}`)}}};
+    else if(state==='go'){const t=Date.now()-t0;if(t<100){state='idle';set('bad','🚫','وقت مش بشري — اضغط تاني');return}times.push(t);n++;$('#rr').innerHTML=times.map(x=>`<span class="chip">${x}ms</span>`).join('');if(n>=5)end();else{state='idle';set('','⏱',`${t}ms — اضغط للمحاولة ${n+1}`)}}};
   listen(()=>clearTimeout(to));
 }
 const TXT=['الصبر مفتاح الفرج واللي يجتهد يوصل لهدفه','لعبنا واتحمسنا وكسبنا الجولة في آخر ثانية','الفريق القوي بيتبني بالتعاون مش بالأسماء','كل لاعب محترف بدأ مرة من الصفر وكمل','سرعة الأصابع مع تركيز العقل بتصنع البطل'];
 function playTyping(el){
-  const t=pick(TXT);let st=0,done=false;
-  el.innerHTML=`<div class="card center"><h2 class="ch">⌨️ سرعة الكتابة</h2><p class="muted">اكتب الجملة بالظبط — أفضل سرعة: ${S.profile.scores?.typing||0} كلمة/دقيقة</p><div class="ttxt" id="tt"></div><div class="bar"><i id="tp" style="width:0%"></i></div><textarea id="ti" rows="2" placeholder="ابدأ الكتابة هنا…" autocomplete="off"></textarea><div id="tr" class="chip">⏱ 0.0ث</div><br><a class="btn ghost sm" href="#/play/typing" data-a="again" style="margin-top:8px">🔄 جملة جديدة</a></div>`;
+  const t=pick(TXT);let st=0,done=false,prev=0,strikes=0;
+  el.innerHTML=`<div class="card center"><h2 class="ch">⌨️ سرعة الكتابة</h2><p class="muted">اكتب الجملة بإيدك — اللصق والنسخ ممنوعين • أفضل سرعة: ${S.profile.scores?.typing||0} كلمة/دقيقة</p><div class="ttxt nocopy" id="tt"></div><div class="bar"><i id="tp" style="width:0%"></i></div><textarea id="ti" rows="2" placeholder="ابدأ الكتابة هنا…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea><div id="tr" class="chip">⏱ 0.0ث</div><br><a class="btn ghost sm" href="#/play/typing" data-a="again" style="margin-top:8px">🔄 جملة جديدة</a></div>`;
   const ti=$('#ti');
   const paintT=v=>{$('#tt').innerHTML=[...t].map((ch,i)=>`<span class="${i<v.length?(v[i]===ch?'tk':'tb'):''}">${esc(ch)}</span>`).join('');$('#tp').style.width=Math.min(100,v.length/t.length*100)+'%'};
   paintT('');
   const iv=setInterval(()=>{const tr=$('#tr');if(tr&&st&&!done)tr.textContent='⏱ '+((Date.now()-st)/1000).toFixed(1)+'ث'},100);listen(()=>clearInterval(iv));
-  ti.oninput=async()=>{if(!st)st=Date.now();paintT(ti.value);if(!done&&norm(ti.value)===norm(t)){done=true;ti.disabled=true;const s=(Date.now()-st)/1000,wpm=Math.round(t.split(' ').length/(s/60));$('#tr').textContent=`✅ ${s.toFixed(1)}ث = ${wpm} كلمة/دقيقة`;await finalize('ty'+Date.now(),{xp:Math.round(wpm/3)+5,win:false});await best('typing',wpm)}};
+  const cheat=m=>{strikes++;ti.value='';prev=0;st=0;paintT('');const tr=$('#tr');if(tr)tr.textContent='⏱ 0.0ث';sfx('bad');toast('🚫 '+m+(strikes>1?' (مرة '+strikes+')':'')+' — ابدأ من الأول','bad')};
+  ['paste','drop','cut','copy','contextmenu','dragstart'].forEach(ev=>ti.addEventListener(ev,e=>{e.preventDefault();if(ev==='paste'||ev==='drop')cheat('اللصق ممنوع')}));
+  ti.addEventListener('beforeinput',e=>{if(/^insertFrom(Paste|Drop|Yank)/.test(e.inputType||'')){e.preventDefault();cheat('اللصق ممنوع')}});
+  ti.oninput=async e=>{if(done)return;
+    if(e&&e.isTrusted===false)return cheat('الإدخال لازم يكون من الكيبورد');
+    const v=ti.value;
+    if(v.length-prev>12)return cheat('اتكشف إدخال نص كامل مرة واحدة');
+    prev=v.length;if(!st)st=Date.now();paintT(v);
+    if(norm(v)===norm(t)){const s=Math.max(.001,(Date.now()-st)/1000),wpm=Math.round(t.split(' ').length/(s/60));
+      if(wpm>200||t.length/s>16)return cheat('سرعة مش بشرية');
+      done=true;ti.disabled=true;$('#tr').textContent=`✅ ${s.toFixed(1)}ث = ${wpm} كلمة/دقيقة`;await finalize('ty'+Date.now(),{xp:Math.round(wpm/3)+5,win:false});await best('typing',wpm)}};
 }
 ACT.again=()=>viewPlay('typing');
 
@@ -873,9 +918,14 @@ ACT.saveprof=async()=>{const n=$('#pn').value.trim();if(n.length<2)return toast(
 let AT='q';
 function viewAdmin(){
   if(!S.admin){view().innerHTML='<div class="card center">🔒 للأدمن بس</div>';return}
-  view().innerHTML=`<h2>⚙️ لوحة الأدمن</h2><div class="tabs">${[['q','🧠 الأسئلة'],['p','🧩 الألغاز'],['e','📅 الفعاليات'],['u','👥 اللاعبين']].map(([k,n])=>`<button class="btn ghost sm" data-a="atab" data-v="${k}">${n}</button>`).join('')}</div><div id="at"></div>`;adminTab(AT)}
+  view().innerHTML=`<h2>⚙️ لوحة الأدمن</h2><div class="tabs">${[['q','🧠 الأسئلة'],['g','🎮 ألعاب الكويز'],['p','🧩 الألغاز'],['e','📅 الفعاليات'],['u','👥 اللاعبين']].map(([k,n])=>`<button class="btn ghost sm" data-a="atab" data-v="${k}">${n}</button>`).join('')}</div><div id="at"></div>`;adminTab(AT)}
 ACT.atab=el=>adminTab(el.dataset.v);
 async function adminTab(t){AT=t;document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===t));const box=$('#at');if(!box)return;box.innerHTML='<div class="load">⏳</div>';
+  if(t==='q'||t==='g')await loadGames();
+  if(t==='g'){
+    box.innerHTML=`<div class="card"><b>إضافة لعبة جديدة للكويز</b><input id="gn" placeholder="اسم اللعبة" maxlength="30"><label class="muted" style="display:block;margin:6px 0 2px">شعار اللعبة (PNG / JPG / WEBP / SVG — بيتصغّر تلقائيًا)</label><input id="gf" type="file" accept="image/*"><button class="btn" style="margin-top:6px" data-a="addgame">➕ إضافة اللعبة</button></div>
+    <p class="muted">اللعبة الجديدة بتظهر في صفحة الكويز، وتقدر تضيف لها أسئلة من تبويب "الأسئلة". الألعاب الأساسية تقدر ترفع لها شعار بس.</p>
+    <div class="list">${Object.entries(QG).map(([k,g])=>`<div class="item"><span class="gl-t">${gIco(g,40)}</span><div class="g"><b>${esc(g.name)}</b><div class="muted">${g.logo?'عليها شعار':'من غير شعار'}${QG0[k]?' • أساسية':''}</div></div><label class="btn sm gold" style="cursor:pointer">🖼 ${g.logo?'تغيير':'رفع'} الشعار<input type="file" accept="image/*" hidden data-ch="setlogo" data-v="${k}"></label>${QG0[k]?(g.logo?`<button class="btn sm ghost" data-a="rmlogo" data-v="${k}">🗑 الشعار</button>`:''):`<button class="btn sm ghost" data-a="delgame" data-v="${k}">🗑 حذف</button>`}</div>`).join('')}</div>`}
   if(t==='q'){const s=await getDocs(collection(db,'quizQuestions'));
     box.innerHTML=`<div class="card"><b>إضافة سؤال</b><select id="qg">${Object.entries(QG).map(([k,g])=>`<option value="${k}">${g.name}</option>`).join('')}</select><input id="qq" placeholder="السؤال">${[1,2,3,4].map(i=>`<input id="qo${i}" placeholder="الاختيار ${i}">`).join('')}<select id="qc"><option value="0">الإجابة الصحيحة: 1</option><option value="1">الإجابة الصحيحة: 2</option><option value="2">الإجابة الصحيحة: 3</option><option value="3">الإجابة الصحيحة: 4</option></select><button class="btn" data-a="addq">➕ إضافة</button></div>
     <p class="muted">الأسئلة الافتراضية بتظهر تلقائيًا لحد ما تضيف أسئلة للعبة — Bomb Squad محتاجة أسئلتك.</p>
@@ -889,6 +939,12 @@ async function adminTab(t){AT=t;document.querySelectorAll('.tabs button').forEac
 ACT.addq=async()=>{const o=[1,2,3,4].map(i=>$('#qo'+i).value.trim()),q=$('#qq').value.trim();if(!q||o.some(x=>!x))return toast('كمّل كل الخانات','bad');await addDoc(collection(db,'quizQuestions'),{game:$('#qg').value,q,o,c:+$('#qc').value});toast('اتضاف ✅','ok');adminTab('q')};
 ACT.addp=async()=>{const a=$('#pa').value.trim(),i=$('#pi').value.trim(),e=$('#pe').value.trim();if(!a||(!i&&!e))return toast('اكتب الإجابة وصورة أو إيموجي','bad');await addDoc(collection(db,'puzzles'),{answer:a,aliases:$('#pal').value.split(/[,،]/).map(x=>x.trim()).filter(Boolean),img:i,emoji:e,level:+$('#pl').value});toast('اتضاف ✅','ok');adminTab('p')};
 ACT.adde=async()=>{const t=$('#etl').value.trim(),d=$('#edt').value;if(!t||!d)return toast('العنوان والموعد مطلوبين','bad');await addDoc(collection(db,'events'),{type:$('#et').value,title:t,desc:$('#ed').value.trim(),game:$('#eg').value.trim(),prize:$('#ep').value.trim(),date:new Date(d).getTime(),p:{},winner:''});toast('اتنشر ✅','ok');$('#etl').value=''};
+document.addEventListener('change',e=>{const t=e.target.closest&&e.target.closest('[data-ch]');if(!t)return;Promise.resolve(ACT[t.dataset.ch]?.(t,e)).catch(er=>{console.error(er);toast(er.message||('حصل خطأ: '+(er.code||'')),'bad')})});
+ACT.addgame=async()=>{const n=$('#gn').value.trim(),f=$('#gf').files[0];if(!n)return toast('اكتب اسم اللعبة','bad');if(!f)return toast('اختار شعار اللعبة','bad');
+  const logo=await imgToLogo(f),id='g'+Date.now().toString(36);await setDoc(doc(db,'quizGames',id),{name:n,logo,createdAt:Date.now()});toast('اتضافت اللعبة ✅','ok');adminTab('g')};
+ACT.setlogo=async el=>{const k=el.dataset.v,f=el.files[0];if(!f)return;const logo=await imgToLogo(f);el.value='';await setDoc(doc(db,'quizGames',k),{name:QG[k].name,logo},{merge:true});toast('اتحدّث الشعار ✅','ok');adminTab('g')};
+ACT.rmlogo=async el=>{await deleteDoc(doc(db,'quizGames',el.dataset.v));toast('اتشال الشعار','ok');adminTab('g')};
+ACT.delgame=async el=>{const k=el.dataset.v;if(!confirm('حذف اللعبة وكل أسئلتها؟'))return;const qs=await getDocs(query(collection(db,'quizQuestions'),where('game','==',k)));await Promise.all(qs.docs.map(d=>deleteDoc(d.ref)));await deleteDoc(doc(db,'quizGames',k));toast('اتحذفت','ok');adminTab('g')};
 ACT.gxp=async el=>{await updateDoc(doc(db,'users',el.dataset.v),{xp:increment(50)});toast('+50 XP','ok');adminTab('u')};
 </script>
 </body>

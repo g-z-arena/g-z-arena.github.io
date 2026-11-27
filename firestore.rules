@@ -8,10 +8,30 @@ service cloud.firestore {
       return signed() && request.auth.token.email.lower() == 'opaidamazed@gmail.com';
     }
 
+    // حدود منطقية لأي تحديث بيعمله اللاعب على حسابه (يمنع تزوير XP والأرقام القياسية من الكونسول)
+    function selfOk() {
+      let a = request.resource.data;
+      let b = resource.data;
+      let sa = a.get('scores', {});
+      let sb = b.get('scores', {});
+      return a.get('xp', 0) - b.get('xp', 0) >= 0 && a.get('xp', 0) - b.get('xp', 0) <= 1500
+        && a.get('wins', 0) - b.get('wins', 0) >= 0 && a.get('wins', 0) - b.get('wins', 0) <= 1
+        && a.get('played', 0) - b.get('played', 0) >= 0 && a.get('played', 0) - b.get('played', 0) <= 1
+        && a.get('spyWins', 0) - b.get('spyWins', 0) >= 0 && a.get('spyWins', 0) - b.get('spyWins', 0) <= 1
+        && sa.get('quizPerfect', 0) - sb.get('quizPerfect', 0) <= 1
+        && sa.get('quiz', 0) <= 400
+        && sa.get('snake', 0) <= 400
+        && sa.get('typing', 0) <= 200
+        && sa.get('reaction', 9999) >= 100;
+    }
+
     match /users/{uid} {
       allow read: if signed();
-      allow create: if signed() && request.auth.uid == uid;
-      allow update: if signed() && (request.auth.uid == uid || isAdmin());
+      allow create: if signed() && request.auth.uid == uid
+        && request.resource.data.get('xp', 0) == 0
+        && request.resource.data.get('wins', 0) == 0
+        && request.resource.data.get('played', 0) == 0;
+      allow update: if signed() && (isAdmin() || (request.auth.uid == uid && selfOk()));
     }
 
     match /rooms/{id} {
@@ -26,6 +46,11 @@ service cloud.firestore {
     }
 
     match /puzzles/{id} {
+      allow read: if signed();
+      allow write: if isAdmin();
+    }
+
+    match /quizGames/{id} {
       allow read: if signed();
       allow write: if isAdmin();
     }
